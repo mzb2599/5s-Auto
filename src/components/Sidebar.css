@@ -1,0 +1,24 @@
+ /* Base styles for the sidebar
+ .sidebar {
+    width: 250px;
+    background-color: #333;
+    color: #fff;
+    transition: width 0.3s ease;
+}
+
+.sidebar.collapsed {
+    width: 60px;
+}
+
+.sidebar-item {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #555;
+}
+
+.toggle-button {
+    cursor: pointer;
+    padding: 10px;
+    text-align: center;
+    background-color: #444;
+} */
