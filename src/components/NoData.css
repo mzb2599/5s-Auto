@@ -1,0 +1,13 @@
+.container {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  height: 100%; /* Set the height of the container */
+  min-height: 600px;
+}
+
+.centered-text {
+  text-align: center; /* Center the text horizontally */
+  font-family: cursive; /* Example font family */
+  display: block;
+}

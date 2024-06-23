@@ -95,12 +95,12 @@ const SideNavBar = ({ handleDrawerOpen, handleDrawerClose, open }) => {
   const Customers = [
     {
       text: "Add Customers",
-      route: "http://localhost:3000/signup",
+      route: "http://localhost:3000/add-customer",
       icon: <PersonAddIcon />,
     },
     {
       text: "View Customers",
-      route: "http://localhost:3000/view-customers",
+      route: "http://localhost:3000/customers",
       icon: <ViewListIcon />,
     },
     {
@@ -120,6 +120,11 @@ const SideNavBar = ({ handleDrawerOpen, handleDrawerClose, open }) => {
       route: "http://localhost:3000/orders",
       icon: <EditNoteIcon />,
     },
+    {
+      text: "New Order",
+      route: "http://localhost:3000/new-order",
+      icon: <EditNoteIcon />,
+    }
   ];
   return (
     <>

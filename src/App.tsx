@@ -10,8 +10,10 @@ import SignUpFormPagination from "./components/SignupFormPagination.tsx";
 import { UserProvider } from "./context/Customer.tsx";
 import ViewCustomers from "./components/ViewCustomers.tsx";
 import Dashboard from "./components/Dashboard.tsx";
-import './App.css'
-import OrderForm from "./components/newOrder.tsx";
+import "./App.css";
+import OrderForm from "./components/NewOrder.tsx";
+import ViewOrder from "./components/ViewOrders.tsx";
+import { OrderProvider } from "./context/Orders.tsx";
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
@@ -31,30 +33,36 @@ const App = () => {
   };
   return (
     <UserProvider>
-      <BrowserRouter>
-        <Box sx={{ flexGrow: 1 }}>
-          <Grid container spacing={2}>
-            <Grid item xs={2}>
-              <SideNavBar
-                handleDrawerOpen={handleDrawerOpen}
-                handleDrawerClose={handleDrawerClose}
-                open={open}
-              />{" "}
+      <OrderProvider>
+        <BrowserRouter>
+          <Box sx={{ flexGrow: 1 }}>
+            <Grid container spacing={2}>
+              <Grid item xs={2}>
+                <SideNavBar
+                  handleDrawerOpen={handleDrawerOpen}
+                  handleDrawerClose={handleDrawerClose}
+                  open={open}
+                />{" "}
+              </Grid>
+              <Grid item xs={8} style={{ marginTop: "100px" }}>
+                <Item>
+                  <Routes>
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route
+                      path="/add-customer"
+                      element={<SignUpFormPagination />}
+                    />
+                    <Route path="/customers" element={<ViewCustomers />} />
+                    <Route path="/new-order" element={<OrderForm />} />
+                    <Route path="/orders" element={<ViewOrder />} />
+                    <Route path="*" element={<MainContent />} />
+                  </Routes>
+                </Item>
+              </Grid>
             </Grid>
-            <Grid item xs={8} style={{ marginTop: "100px" }}>
-              <Item>
-                <Routes>
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/signup" element={<SignUpFormPagination />} />
-                  <Route path="/view-customers" element={<ViewCustomers />} />
-                  <Route path="/new-order" element={<OrderForm />} />
-                  <Route path="*" element={<MainContent />} />
-                </Routes>
-              </Item>
-            </Grid>
-          </Grid>
-        </Box>
-      </BrowserRouter>
+          </Box>
+        </BrowserRouter>
+      </OrderProvider>
     </UserProvider>
   );
 };

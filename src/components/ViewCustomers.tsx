@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -9,6 +9,7 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import { UserContext } from "../context/Customer.tsx";
+import NoDataComponent from "./NoData.tsx";
 
 export default function StickyHeadTable() {
   const [page, setPage] = React.useState(0);
@@ -37,11 +38,18 @@ export default function StickyHeadTable() {
   const handleClick = (id) => {
     history(`/user-details`);
   };
-  return (
-    <Paper sx={{ height: "600px" }}>
-      <h1 style={{ fontFamily: "cursive" }}>View Customer Details</h1>
+  return userData ? (
+    <Paper
+      sx={{
+        height: "max-content",
+        width: "max-content",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <h1 style={{ fontFamily: "cursive" }}>View Customers</h1>
       <hr />
-      <TableContainer sx={{ minHeight: "100%", minWidth: "950px" }}>
+      <TableContainer sx={{ flex: "1", overflow: "auto" }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
@@ -151,5 +159,10 @@ export default function StickyHeadTable() {
         onRowsPerPageChange={handleChangeRowsPerPage} // Function to handle rows per page changes
       />
     </Paper>
+  ) : (
+    <NoDataComponent
+      data={"No customers available"}
+      children={<Link to="/add-customer">Add new customers</Link>}
+    ></NoDataComponent>
   );
 }
