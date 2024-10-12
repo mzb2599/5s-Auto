@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -8,13 +8,15 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import NoDataComponent from "./NoData.tsx";
-import { OrderContext } from "../context/Orders.tsx";
+import NoDataComponent from "../NoData.tsx";
+import { OrderContext } from "../../context/Orders.tsx";
 
 const ViewOrder: React.FC<ViewOrderProps> = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const { ordersData } = useContext(OrderContext);
+  const { ordersData, setOrdersData } = useContext(OrderContext);
+  const [sortType, setSortType] = useState("asc");
+
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -26,6 +28,66 @@ const ViewOrder: React.FC<ViewOrderProps> = () => {
     setPage(0);
   };
 
+  const sortUserDataByHeader = (userData, header, sortOrder) => {
+    const sortedData = [...userData];
+
+    sortedData.sort((a, b) => {
+      const valueA = a[header];
+      const valueB = b[header];
+
+      // Convert values to strings and handle numeric strings
+      const stringA = String(valueA);
+      const stringB = String(valueB);
+
+      // Check if both values are numeric strings
+      const isNumericA = /^\d+$/.test(stringA);
+      const isNumericB = /^\d+$/.test(stringB);
+
+      if (isNumericA && isNumericB) {
+        const numA = parseInt(stringA, 10);
+        const numB = parseInt(stringB, 10);
+        return sortOrder === "asc" ? numA - numB : numB - numA;
+      }
+
+      // Handle numeric vs. string comparison
+      if (typeof valueA === "number" && typeof valueB === "number") {
+        return sortOrder === "asc" ? valueA - valueB : valueB - valueA;
+      }
+
+      // Handle string comparison
+      const stringValueA = stringA.toUpperCase();
+      const stringValueB = stringB.toUpperCase();
+
+      if (sortOrder === "asc") {
+        return stringValueA.localeCompare(stringValueB);
+      } else {
+        return stringValueB.localeCompare(stringValueA);
+      }
+    });
+
+    return sortedData;
+  };
+  const toCamelCase = (input) => {
+    // Split the input string by spaces, dashes, or underscores
+    const words = input.split(/[\s\-_]+/);
+
+    // Capitalize the first letter of all words after the first one
+    const camelCaseWords = words.map((word, index) => {
+      if (index === 0) {
+        return word.toLowerCase(); // Keep the first word lowercase
+      } else {
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      }
+    });
+
+    // Join the words back together
+    return camelCaseWords.join("");
+  };
+  const handleSort = (header) => {
+    console.log(header);
+    sortType === "asc" ? setSortType("desc") : setSortType("asc");
+    setOrdersData(sortUserDataByHeader(ordersData, header, sortType));
+  };
   const headers = [
     "Order ID",
     "Order Date",
@@ -67,6 +129,7 @@ const ViewOrder: React.FC<ViewOrderProps> = () => {
                     textTransform: "uppercase",
                     fontFamily: "cursive",
                   }}
+                  onClick={() => handleSort(toCamelCase(header.toLowerCase()))}
                   align="center"
                 >
                   {header}
@@ -82,13 +145,13 @@ const ViewOrder: React.FC<ViewOrderProps> = () => {
                 tabIndex={-1}
                 style={{ padding: "10px", fontFamily: "cursive" }}
                 onClick={() => handleClick(order.orderId)}
-                key={order.orderId.toString()} // Assuming orderId can be converted to string
+                key={order?.orderId?.toString()} // Assuming orderId can be converted to string
               >
                 <TableCell
                   style={{ minWidth: 50, fontFamily: "cursive" }}
                   align="center"
                 >
-                  {order.orderId.toString()}{" "}
+                  {order?.orderId?.toString()}{" "}
                   {/* Adjust based on actual format */}
                 </TableCell>
                 <TableCell
@@ -147,7 +210,7 @@ const ViewOrder: React.FC<ViewOrderProps> = () => {
       <TablePagination
         rowsPerPageOptions={[10, 25, 100]}
         component="div"
-        count={ordersData.length} // Total number of orders
+        count={ordersData?.length} // Total number of orders
         rowsPerPage={rowsPerPage} // Rows per page
         page={page} // Current page
         onPageChange={handleChangePage} // Function to handle page changes

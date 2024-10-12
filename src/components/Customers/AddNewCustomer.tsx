@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import Button from "@mui/material/Button";
-import { UserContext } from "../context/Customer.tsx";
+import { UserContext } from "../../context/Customer.tsx";
 import Avatar from "@mui/material/Avatar";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -14,16 +14,15 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
 import { v4 as uuidv4 } from "uuid";
 
-interface User {
+interface Customer {
   id: string;
   name: string;
   phone: string;
   email: string;
   city: string;
   state: string;
-  country: string;
-  vehicle: string;
-  yearOfManufacture: number;
+  area: string;
+  TypeofWork: string;
   creditLimit: number;
   paymentType: string;
 }
@@ -39,16 +38,15 @@ const SignUpFormPagination = () => {
   const generateUniqueId = (): string => {
     return uuidv4();
   };
-  const [userTemp, setUserTemp] = useState<User>({
+  const [userTemp, setUserTemp] = useState<Customer>({
     id: generateUniqueId(),
     name: " ",
     phone: " ",
     email: " ",
     city: "",
     state: "",
-    country: "",
-    vehicle: " ",
-    yearOfManufacture: 2024,
+    area: "",
+    TypeofWork: " ",
     creditLimit: 0,
     paymentType: "cash",
   });
@@ -59,18 +57,18 @@ const SignUpFormPagination = () => {
     return emailRegex.test(email);
   };
   // const validateUserDetails = () => {
-  //   user.name.length < 3 ? setIsNameValid(true) : setIsNameValid(false);
-  //   user.phone.length !== 10 ? setIsPhoneValid(true) : setIsPhoneValid(false);
+  //   user.name?.length < 3 ? setIsNameValid(true) : setIsNameValid(false);
+  //   user.phone?.length !== 10 ? setIsPhoneValid(true) : setIsPhoneValid(false);
   //   !validateEmail(user.email)
   //     ? setIsEmailValid(validateEmail(user.email))
   //     : setIsEmailValid(!validateEmail(user.email));
-  //   user.address.city.length === 0
+  //   user.address.city?.length === 0
   //     ? setIsCityValid(true)
   //     : setIsCityValid(false);
-  //   user.address.state.length === 0
+  //   user.address.state?.length === 0
   //     ? setIsStateValid(true)
   //     : setIsStateValid(false);
-  //   user.address.country.length === 0
+  //   user.address.area?.length === 0
   //     ? setIsCountryValid(true)
   //     : setIsCountryValid(false);
 
@@ -91,25 +89,25 @@ const SignUpFormPagination = () => {
   // };
 
   const validateUserDetails = async () => {
-    const { name, phone, email, city, state, country } = userTemp;
+    const { name, phone, email, city, state, area } = userTemp;
 
-    setIsNameValid(name.length >= 3);
-    setIsPhoneValid(phone.length === 10);
+    setIsNameValid(name?.length >= 3);
+    setIsPhoneValid(phone?.length === 10);
     setIsEmailValid(validateEmail(email));
-    setIsCityValid(city.length > 0);
-    setIsStateValid(state.length > 0);
-    setIsCountryValid(country.length > 0);
+    setIsCityValid(city?.length > 0);
+    setIsStateValid(state?.length > 0);
+    setIsCountryValid(area?.length > 0);
   };
   const nextPage = async () => {
     await validateUserDetails(); //validateUserDetails();
-    const { name, phone, email, city, state, country } = userTemp;
+    const { name, phone, email, city, state, area } = userTemp;
     if (
-      name.length >= 3 &&
-      phone.length === 10 &&
+      name?.length >= 3 &&
+      phone?.length === 10 &&
       validateEmail(email) &&
-      city.length > 0 &&
-      state.length > 0 &&
-      country.length > 0
+      city?.length > 0 &&
+      state?.length > 0 &&
+      area?.length > 0
     ) {
       setCurrentPage(currentPage + 1);
     } else {
@@ -124,8 +122,8 @@ const SignUpFormPagination = () => {
   };
 
   const submitForm = () => {
-    const { vehicle, creditLimit } = userTemp;
-    if (vehicle.length > 0 && creditLimit >= 0) {
+    const { TypeofWork, creditLimit } = userTemp;
+    if (TypeofWork?.length > 0 && creditLimit >= 0) {
       setUserData([...userData, userTemp]);
     } else {
       alert("Please fill all the fields properly before proceeding");
@@ -149,6 +147,9 @@ const SignUpFormPagination = () => {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
+                backgroundColor: "lavender",
+                padding: "50px",
+                borderRadius: "10px",
               }}
             >
               <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
@@ -244,12 +245,12 @@ const SignUpFormPagination = () => {
                     <TextField
                       required
                       fullWidth
-                      name="country"
+                      name="area"
                       label="Country"
-                      id="country"
-                      autoComplete="address-country"
+                      id="area"
+                      autoComplete="address-area"
                       onChange={handleChange}
-                      value={userTemp.country}
+                      value={userTemp.area}
                     />
                     {!isCountryValid && (
                       <p style={{ color: "red" }}>Country cannot be empty</p>
@@ -277,29 +278,19 @@ const SignUpFormPagination = () => {
                 <CarRepairIcon />
               </Avatar>
               <Typography component="h1" variant="h5">
-                Vehicle & Payment
+              TypeofWork & Payment
               </Typography>
               <Box component="form" noValidate sx={{ mt: 2 }}>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={12}>
                     <TextField
-                      autoComplete="vehicle"
-                      name="vehicle"
+                      autoComplete="TypeofWork"
+                      name="TypeofWork"
                       required
                       fullWidth
-                      id="vehicle"
-                      label="Vehicle-name(Eg: Honda city)"
+                      id="TypeofWork"
+                      label="TypeofWork"
                       autoFocus
-                      onChange={handleChange}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={12}>
-                    <TextField
-                      required
-                      fullWidth
-                      id="yearOfManufacture"
-                      label="Year of Manufacture"
-                      name="yearOfManufacture"
                       onChange={handleChange}
                     />
                   </Grid>

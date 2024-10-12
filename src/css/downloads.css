@@ -1,0 +1,53 @@
+/* Ensure the Grid container takes full width and aligns items properly */
+.MuiGrid-container {
+  display: flex;
+  flex-wrap: wrap; /* Ensures items wrap properly on smaller screens */
+  gap: 16px; /* Adds spacing between Grid items */
+}
+
+/* Style for each Grid item containing a DatePicker */
+.date-picker-container {
+  display: flex;
+  flex-direction: column; /* Stack label and DatePicker vertically */
+  gap: 8px; /* Space between label and DatePicker */
+  width: 100%; /* Ensure full width within Grid item */
+  align-items: flex-start; /* Align items to start of the container */
+}
+
+/* Style the label */
+.date-picker-container label {
+  font-weight: bold; /* Optional: Make the label bold */
+  margin: 0; /* Remove default margin */
+}
+
+/* Ensure DatePicker takes full width */
+.date-picker-container .MuiTextField-root {
+  width: 100%;
+}
+
+/* Adjust the Grid item padding if needed */
+.MuiGrid-item {
+  padding: 0 8px; /* Adjust spacing inside Grid items */
+}
+
+/* Styling for the checkbox section */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Responsive grid layout */
+  gap: 20px; /* Space between grid items */
+}
+
+.grid-item {
+  display: flex;
+  align-items: center;
+}
+
+.grid-item label {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Space between checkbox and label text */
+}
+
+.grid-item span {
+  word-break: break-word; /* Ensure long labels wrap correctly */
+}

@@ -14,10 +14,10 @@ import Radio from "@mui/material/Radio";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import { Link } from "react-router-dom";
-import NoDataComponent from "./NoData.tsx";
-import { OrderContext } from "../context/Orders.tsx";
-import { UserContext } from "../context/Customer.tsx";
-import { generateUniqueId } from "../helpers/helpers.tsx";
+import NoDataComponent from "../NoData.tsx";
+import { OrderContext } from "../../context/Orders.tsx";
+import { UserContext } from "../../context/Customer.tsx";
+import { generateUniqueId } from "../../helpers/helpers.tsx";
 
 interface Order {
   orderId: string;
@@ -56,7 +56,7 @@ const OrderForm: React.FC = () => {
     setOrdersData([...ordersData, order]);
   };
 
-  return userData.length > 0 ? (
+  return userData?.length > 0 ? (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <Box

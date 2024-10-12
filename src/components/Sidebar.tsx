@@ -15,9 +15,11 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import EditNoteIcon from "@mui/icons-material/EditNote";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import ViewListIcon from "@mui/icons-material/ViewList";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+import DownloadIcon from "@mui/icons-material/Download";
 
 import { Divider } from "@mui/material";
 const drawerWidth = 220;
@@ -104,8 +106,13 @@ const SideNavBar = ({ handleDrawerOpen, handleDrawerClose, open }) => {
       icon: <ViewListIcon />,
     },
     {
+      text: "Past Customers",
+      route: "http://localhost:3000/past-customers",
+      icon: <ViewListIcon />,
+    },
+    {
       text: "Customer Details",
-      route: "http://localhost:3000/customer-details",
+      route: "http://localhost:3000/search-customer",
       icon: <PersonSearchIcon />,
     },
   ];
@@ -123,8 +130,8 @@ const SideNavBar = ({ handleDrawerOpen, handleDrawerClose, open }) => {
     {
       text: "New Order",
       route: "http://localhost:3000/new-order",
-      icon: <EditNoteIcon />,
-    }
+      icon: <AddShoppingCartIcon />,
+    },
   ];
   return (
     <>
@@ -206,41 +213,6 @@ const SideNavBar = ({ handleDrawerOpen, handleDrawerClose, open }) => {
                 </ListItemButton>
               </ListItem>
             </>
-            // <ListItem
-            //   key={index}
-            //   disablePadding
-            //   sx={{ display: "block" }}
-            //   style={{ backgroundColor: "#2b2d42" }}
-            // >
-            //   <ListItemButton
-            //     sx={{
-            //       minHeight: 48,
-            //       justifyContent: open ? "initial" : "center",
-            //       px: 2.5,
-            //       backgroundColor: "#2b2d42",
-            //     }}
-            //   >
-            //     <ListItemIcon
-            //       sx={{
-            //         minWidth: 0,
-            //         mr: open ? 3 : "auto",
-            //         justifyContent: "center",
-            //         backgroundColor: "#2b2d42",
-            //       }}
-            //       style={{ color: "ghostwhite" }}
-            //     >
-            //       {text === "Dashboard" ? (
-            //         <DashboardIcon />
-            //       ) : text === "Orders" ? (
-            //         <EditNoteIcon />
-            //       ) : null}
-            //     </ListItemIcon>
-            //     <ListItemText
-            //       primary={text}
-            //       sx={{ opacity: open ? 1 : 0, backgroundColor: "#2b2d42" }}
-            //     />
-            //   </ListItemButton>
-            // </ListItem>
           ))}
           <Divider style={{ backgroundColor: "wheat" }} />
           {Customers.map((customer, index) => (
@@ -284,6 +256,41 @@ const SideNavBar = ({ handleDrawerOpen, handleDrawerClose, open }) => {
             </>
           ))}
           <Divider style={{ backgroundColor: "wheat" }} />
+          <ListItem
+            disablePadding
+            sx={{ display: "block" }}
+            style={{ backgroundColor: "#2b2d42" }}
+          >
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? "initial" : "center",
+                px: 2.5,
+                backgroundColor: "#2b2d42",
+              }}
+              component={Link}
+              to={"/download-report"}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : "auto",
+                  justifyContent: "center",
+                  backgroundColor: "#2b2d42",
+                }}
+                style={{ color: "ghostwhite" }}
+              >
+                <DownloadIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={"Download Reports"}
+                sx={{
+                  opacity: open ? 1 : 0,
+                  backgroundColor: "#2b2d42",
+                }}
+              />
+            </ListItemButton>
+          </ListItem>
         </List>
       </Drawer>
     </>

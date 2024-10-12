@@ -1,16 +1,16 @@
 import React, { createContext, useState } from "react";
-import { initialUsers } from "../Data/Users.tsx";
+import { data } from "../Data/Users.tsx";
 
-interface User {
+export interface Customer {
   id: string;
   name: string;
   phone: string;
   email: string;
   city: string;
   state: string;
-  country: string;
-  vehicle: string;
-  yearOfManufacture: Number;
+  gstNumber: string;
+  area: string;
+  TypeofWork: string;
   creditLimit: Number;
   paymentType: string;
 }
@@ -21,17 +21,17 @@ const UserContext = createContext({});
 // Define a functional component to provide the context
 const UserProvider = (props) => {
   // Define initial state using useState hook
-  const [userData, setUserData] = useState(initialUsers);
-  const [user, setUser] = useState<User>({
+  const [userData, setUserData] = useState(data);
+  const [user, setUser] = useState<Customer>({
     id: "",
     name: " ",
     phone: " ",
     email: " ",
     city: "",
     state: "",
-    country: "",
-    vehicle: " ",
-    yearOfManufacture: 2024,
+    area: "",
+    TypeofWork: " ",
+    gstNumber: "",
     creditLimit: 0,
     paymentType: "cash",
   });

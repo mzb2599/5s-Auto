@@ -1,0 +1,57 @@
+{
+    "title": {
+      "text": "Maharashtra Geo Heatmap",
+      "left": "center"
+    },
+    "tooltip": {
+      "trigger": "item",
+      "formatter": "{b}: {c}"
+    },
+    "visualMap": {
+      "min": 0,
+      "max": 100,
+      "left": "left",
+      "top": "bottom",
+      "text": ["High", "Low"],
+      "inRange": {
+        "color": ["#e0ffff", "#006edd"]
+      },
+      "calculable": true
+    },
+    "geo": {
+      "map": "Maharashtra",
+      "label": {
+        "emphasis": {
+          "show": false
+        }
+      },
+      "roam": true,
+      "itemStyle": {
+        "normal": {
+          "areaColor": "#323c48",
+          "borderColor": "#111"
+        },
+        "emphasis": {
+          "areaColor": "#2a333d"
+        }
+      }
+    },
+    "series": [
+      {
+        "name": "City Heatmap",
+        "type": "heatmap",
+        "coordinateSystem": "geo",
+        "data": [
+          { "name": "Mumbai", "value": [72.8777, 19.0760, 80] },
+          { "name": "Pune", "value": [73.8567, 18.5204, 70] },
+          { "name": "Nagpur", "value": [79.0882, 21.1458, 60] },
+          { "name": "Nashik", "value": [73.7898, 19.9975, 50] },
+          { "name": "Aurangabad", "value": [75.3433, 19.8762, 40] },
+          { "name": "Kolhapur", "value": [74.2433, 16.7049, 30] },
+          { "name": "Solapur", "value": [75.9064, 17.6599, 20] },
+          { "name": "Thane", "value": [72.9781, 19.2183, 90] }
+        ]
+      }
+    ]
+  }
+  
