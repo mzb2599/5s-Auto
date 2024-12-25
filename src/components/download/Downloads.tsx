@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { CSVLink } from "react-csv";
-import 'jspdf-autotable';
-import { UserContext } from "../../context/Customer.tsx";
+import "jspdf-autotable";
+import { CustomerContext } from "../../context/Customer.tsx";
+import { OrderContext } from "../../context/Orders.tsx";
 import {
   Checkbox,
   FormControl,
@@ -14,9 +15,9 @@ import {
 } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import BasicCard from "../Card/Card.tsx";
 import { jsPDF } from "jspdf";
-import { Document, Packer, Paragraph, TextRun } from "docx";
+//import { Document, Packer, Paragraph, TextRun, Table, AlignmentType } from "docx";
+import "../../css/downloads.css";
 import "../../css/downloads.css";
 
 const CustomerFields = [
@@ -26,7 +27,7 @@ const CustomerFields = [
   { label: "Email", key: "email" },
   { label: "City", key: "city" },
   { label: "State", key: "state" },
-  { label: "Country", key: "area" },
+  { label: "Area ", key: "area" },
   { label: "Type of Work", key: "TypeofWork" },
   { label: "Credit", key: "credit" },
   { label: "Credit Limit", key: "creditLimit" },
@@ -47,24 +48,49 @@ const OrderFields = [
 ];
 
 const DownloadReport = () => {
-  const { userData } = useContext(UserContext);
+  const { CustomerData: customerData } = useContext(CustomerContext);
+  const { ordersData } = useContext(OrderContext);
   const [reportType, setReportType] = useState("Customers");
   const [selectedFields, setSelectedFields] = useState(
     CustomerFields.map((field) => ({ ...field, selected: true }))
   );
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState();
   const [cardLabel, setCardLabel] = useState("Report");
   const [data, setData] = useState([]);
   const [fileType, setFileType] = useState("CSV");
 
   useEffect(() => {
     setSelectedFields(
-      reportType == "Customers"
+      reportType === "Customers"
         ? CustomerFields.map((field) => ({ ...field, selected: true }))
         : OrderFields.map((field) => ({ ...field, selected: true }))
     );
   }, [reportType]);
+
+  const filterOrdersByDate = (orders) => {
+    if (!startDate || !endDate) return orders; // If no date is selected, return all orders
+    return orders?.filter((order) => {
+      const orderDate = new Date(order.orderDate);
+      return orderDate >= startDate && orderDate <= endDate; // Filter orders within the range
+    });
+  };
+  const filterCustomersByOrderDate = (customers) => {
+    if (!startDate || !endDate) return customers; // If no date range, return all customers
+    return customers?.filter((customer) => {
+      // Get all orders for the current customer
+      const customerOrders = ordersData?.filter(
+        (order) => order.orderCustomerId === customer.id
+      );
+
+      // Check if any order falls within the date range
+      return customerOrders.some((order) => {
+        const orderDate = new Date(order.orderDate);
+        return orderDate >= startDate && orderDate <= endDate; // Check if the order date is within the range
+      });
+    });
+  };
+
   const handleFieldChange = (key) => {
     setSelectedFields((fields) =>
       fields.map((field) =>
@@ -74,25 +100,53 @@ const DownloadReport = () => {
   };
 
   const getSelectedHeaders = () =>
-    selectedFields.filter((field) => field.selected);
+    selectedFields?.filter((field) => field.selected);
 
   const getSelectedData = () => {
-    if (!userData || !userData.length) return [];
-    const headers = getSelectedHeaders();
-    if (!headers.length) return []; // No fields selected
+    let currentData = reportType === "Customers" ? customerData : ordersData;
+    if (!currentData || !currentData.length) return [];
 
-    return userData.map((item) =>
+    if (reportType === "Orders") {
+      currentData = filterOrdersByDate(currentData); // <-- Apply date filter here
+    } else {
+      currentData = filterCustomersByOrderDate(currentData);
+    }
+    const headers = getSelectedHeaders();
+    if (!headers.length) return [];
+    return currentData.map((item) =>
       headers.reduce((acc, field) => {
-        acc[field.key] = item[field.key];
+        if (
+          field.key === "itemDetails" &&
+          typeof item[field.key] === "object"
+        ) {
+          acc[field.key] = formatItemDetails(item[field.key]);
+        } else {
+          acc[field.key] = item[field.key] || "";
+        }
         return acc;
       }, {})
     );
   };
 
+  const formatItemDetails = (details) => {
+    if (Array.isArray(details)) {
+      return details
+        .map((detail) => {
+          return detail.name
+            ? `${detail.name} (Quantity: ${detail.quantity})`
+            : "";
+        })
+        .join(", ");
+    } else if (typeof details === "object") {
+      return JSON.stringify(details, null, 2);
+    }
+    return JSON.stringify(details);
+  };
+
   useEffect(() => {
     const selectedData = getSelectedData();
     setData(selectedData);
-  }, [userData, selectedFields]);
+  }, [customerData, ordersData, selectedFields, reportType]);
 
   const handleFileTypeChange = (event) => {
     setFileType(event.target.value);
@@ -109,57 +163,154 @@ const DownloadReport = () => {
       getSelectedHeaders().map((field) => item[field.key])
     );
 
-    doc.text(cardLabel, 20, 10);
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text(cardLabel || "Report", 20, 10);
+
     doc.autoTable({
       head: [headers],
       body: rows,
       startY: 20,
+      theme: "striped",
+      headStyles: {
+        fillColor: [22, 160, 133],
+        textColor: 255,
+        fontSize: 12,
+        fontStyle: "bold",
+        halign: "center",
+      },
+      bodyStyles: {
+        fontSize: 10,
+        halign: "center",
+        valign: "middle",
+        cellPadding: 2,
+      },
+      alternateRowStyles: {
+        fillColor: [245, 245, 245],
+      },
+      margin: { top: 30, left: 10, bottom: 10, right: 10 },
     });
+
     doc.save(`${cardLabel || "report"}.pdf`);
   };
 
-  const downloadWord = () => {
-    const doc = new Document();
-    const headers = getSelectedHeaders().map((field) => field.label);
-    const rows = data.map((item) =>
-      getSelectedHeaders().map((field) => item[field.key])
-    );
+  // Define `sendReportToServer` inside the component
 
-    // Add title
-    doc.addSection({
-      properties: {},
-      children: [
-        new Paragraph({
-          text: cardLabel,
-          heading: "Heading1",
-        }),
-      ],
-    });
+  const sendReportToServer = async (fileType, data, headers) => {
+    const url = "http://localhost:3000/api/email/send-report"; // Replace with your server URL
+    const body = new FormData();
 
-    // Add table headers
-    const tableRows = [
-      headers.map((header) => new TextRun(header)),
-      ...rows.map((row) => row.map((value) => new TextRun(value))),
-    ];
+    if (fileType === "CSV") {
+      const csvContent = [
+        headers.map((header) => header.label).join(","),
+        ...data.map((row) =>
+          headers.map((header) => row[header.key]).join(",")
+        ),
+      ].join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv" });
+      body.append("file", blob, "report.csv");
+    } else if (fileType === "PDF") {
+      const doc = new jsPDF();
+      const headerLabels = headers.map((header) => header.label);
+      const rows = data.map((item) =>
+        headers.map((header) => item[header.key])
+      );
 
-    doc.addSection({
-      properties: {},
-      children: [
-        new Paragraph({
-          children: tableRows,
-        }),
-      ],
-    });
+      doc.setFontSize(18);
+      doc.setFont("helvetica", "bold");
+      doc.text("Report", 20, 10);
+      doc.autoTable({
+        head: [headerLabels],
+        body: rows,
+        startY: 20,
+      });
 
-    Packer.toBlob(doc).then((blob) => {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${cardLabel || "report"}.docx`;
-      a.click();
-      URL.revokeObjectURL(url);
-    });
+      const pdfBlob = doc.output("blob");
+      body.append("file", pdfBlob, "report.pdf");
+    }
+
+    body.append("fileType", fileType);
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        body: body,
+      });
+
+      if (response.ok) {
+        alert("Report sent successfully!");
+      } else {
+        alert("Failed to send the report.");
+      }
+    } catch (error) {
+      console.error("Error sending report:", error);
+      alert("An error occurred while sending the report.");
+    }
   };
+
+  // Modify the button onClick handlers
+
+  const handleEmailReport = () => {
+    const headers = getSelectedHeaders();
+    if (!headers.length) {
+      alert("No fields selected for the report.");
+      return;
+    }
+    sendReportToServer(fileType, data, headers);
+  };
+  // const downloadWord = () => {
+  //   const doc = new Document();
+  //   const headers = getSelectedHeaders().map((field) => field.label);
+  //   const rows = data.map((item) =>
+  //     getSelectedHeaders().map((field) => item[field.key])
+  //   );
+
+  //   const table = new Table({
+  //     rows: rows.length + 1,
+  //     columns: headers.length,
+  //     width: { size: 100, type: "pct" },
+  //     alignment: "center",
+  //   });
+
+  //   headers.forEach((header, index) => {
+  //     table.getCell(0, index).add(
+  //       new Paragraph({
+  //         text: header,
+  //         alignment: AlignmentType.CENTER,
+  //       })
+  //     );
+  //   });
+
+  //   rows.forEach((row, rowIndex) => {
+  //     row.forEach((cell, cellIndex) => {
+  //       table.getCell(rowIndex + 1, cellIndex).add(
+  //         new Paragraph({
+  //           children: [new TextRun(cell)],
+  //           alignment: AlignmentType.CENTER,
+  //         })
+  //       );
+  //     });
+  //   });
+
+  //   doc.addSection({
+  //     children: [
+  //       new Paragraph({
+  //         text: cardLabel,
+  //         heading: "Heading1",
+  //       }),
+  //       table,
+  //     ],
+  //   });
+
+  //   Packer.toBlob(doc).then((blob) => {
+  //     const url = URL.createObjectURL(blob);
+  //     const a = document.createElement("a");
+  //     a.href = url;
+  //     a.download = `${cardLabel || "report"}.docx`;
+  //     a.click();
+  //     URL.revokeObjectURL(url);
+  //   });
+  // };
 
   return (
     <div style={{ width: "800px", margin: "0 auto", padding: "20px" }}>
@@ -167,11 +318,7 @@ const DownloadReport = () => {
       <Grid
         container
         spacing={6}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
+        style={{ alignItems: "center", justifyContent: "center" }}
       >
         <Grid item sm={4}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -198,14 +345,16 @@ const DownloadReport = () => {
       <h2>Select Fields to be Downloaded</h2>
       <div className="grid-container">
         {selectedFields.map((field) => (
-          <div key={field.key} className="grid-item">
-            <label>
-              <Checkbox
-                checked={field.selected}
-                onChange={() => handleFieldChange(field.key)}
-              />
-              <span>{field.label}</span>
-            </label>
+          <div
+            key={field.key}
+            className="grid-item"
+            style={{ display: "flex", alignItems: "center" }}
+          >
+            <Checkbox
+              checked={field.selected}
+              onChange={() => handleFieldChange(field.key)}
+            />
+            <span style={{ paddingLeft: "8px" }}>{field.label}</span>
           </div>
         ))}
       </div>
@@ -215,7 +364,6 @@ const DownloadReport = () => {
         spacing={5}
         style={{
           marginTop: "20px",
-          display: "flex",
           alignItems: "center",
           justifyContent: "center",
         }}
@@ -226,7 +374,7 @@ const DownloadReport = () => {
             <Select value={fileType} onChange={handleFileTypeChange}>
               <MenuItem value="CSV">CSV</MenuItem>
               <MenuItem value="PDF">PDF</MenuItem>
-              <MenuItem value="Word">Word</MenuItem>
+              {/* <MenuItem value="Word">Word</MenuItem> */}
             </Select>
           </FormControl>
         </Grid>
@@ -239,28 +387,33 @@ const DownloadReport = () => {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item sm={6} style={{ alignSelf: "flex-end" }}>
+        <Grid item sm={6}>
           {fileType === "CSV" && (
-            <CSVLink
-              data={data}
-              headers={getSelectedHeaders()}
-              filename={`${cardLabel || "report"}.csv`}
-              className="btn btn-primary"
-              style={{ textDecoration: "none" }}
-            >
-              <Button variant="contained">Download CSV</Button>
-            </CSVLink>
+            <>
+              <CSVLink
+                data={data}
+                headers={getSelectedHeaders()}
+                filename={`${cardLabel || "report"}.csv`}
+                style={{ textDecoration: "none" }}
+              >
+                <Button variant="contained" style={{ margin: "15px" }}>
+                  Download CSV
+                </Button>
+              </CSVLink>
+            </>
           )}
           {fileType === "PDF" && (
-            <Button variant="contained" onClick={downloadPDF}>
-              Download PDF
-            </Button>
+            <>
+              <Button variant="contained" onClick={downloadPDF}>
+                Download PDF
+              </Button>
+            </>
           )}
-          {fileType === "Word" && (
+          {/* {fileType === "Word" && (
             <Button variant="contained" onClick={downloadWord}>
               Download Word
             </Button>
-          )}
+          )} */}
         </Grid>
       </Grid>
     </div>

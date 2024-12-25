@@ -1,35 +1,41 @@
-import React, { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import NoDataComponent from "../NoData.tsx";
 import { OrderContext } from "../../context/Orders.tsx";
 
 const ViewOrder: React.FC<ViewOrderProps> = () => {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const { ordersData, setOrdersData } = useContext(OrderContext);
+  const [filteredOrdersData, setFilteredOrdersData] = useState();
   const [sortType, setSortType] = useState("asc");
+  const id = useParams();
+  useEffect(() => {
+    
+    if (id?.id && Array.isArray(ordersData) && ordersData.length > 0) {
+      const filteredOrders = ordersData?.filter((order) => {
+        const customerId = parseInt(order.orderCustomerId);
+        const parsedId = parseInt(id?.id);
+        if (isNaN(customerId) || isNaN(parsedId)) {
+          console.warn("Invalid customer ID or id:", customerId, parsedId);
+        }
+        return customerId === parsedId;
+      });
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
+      setFilteredOrdersData(filteredOrders); // Update state with filtered orders
+    }
+    else{
+      setFilteredOrdersData(ordersData)
+    }
+  }, [ordersData, id]); // Run effect when either ordersData or id changes
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const sortUserDataByHeader = (userData, header, sortOrder) => {
-    const sortedData = [...userData];
+  const sortUserDataByHeader = (CustomerData, header, sortOrder) => {
+    const sortedData = [...CustomerData];
 
     sortedData.sort((a, b) => {
       const valueA = a[header];
@@ -72,7 +78,7 @@ const ViewOrder: React.FC<ViewOrderProps> = () => {
     const words = input.split(/[\s\-_]+/);
 
     // Capitalize the first letter of all words after the first one
-    const camelCaseWords = words.map((word, index) => {
+    const camelCaseWords = words?.map((word, index) => {
       if (index === 0) {
         return word.toLowerCase(); // Keep the first word lowercase
       } else {
@@ -84,9 +90,8 @@ const ViewOrder: React.FC<ViewOrderProps> = () => {
     return camelCaseWords.join("");
   };
   const handleSort = (header) => {
-    console.log(header);
     sortType === "asc" ? setSortType("desc") : setSortType("asc");
-    setOrdersData(sortUserDataByHeader(ordersData, header, sortType));
+    setFilteredOrdersData(sortUserDataByHeader(ordersData, header, sortType));
   };
   const headers = [
     "Order ID",
@@ -99,28 +104,27 @@ const ViewOrder: React.FC<ViewOrderProps> = () => {
     "Billing Address",
   ];
 
-  const history = useNavigate();
-
-  const handleClick = (orderId: string) => {
-    history(`/order-details/${orderId}`); // Adjust the route as per your routing setup
-  };
-
   return ordersData ? (
     <Paper
       sx={{
-        height: "max-content",
-        width: "max-content",
-        display: "flex",
-        flexDirection: "column",
+        overflowX: "auto", // Allows horizontal scrolling if the table is too wide
+        width: "100%", // Ensures the table fits the container width
       }}
     >
       <h1 style={{ fontFamily: "cursive" }}>View Orders</h1>
       <hr />
       <TableContainer sx={{ flex: "1", overflow: "auto" }}>
-        <Table stickyHeader aria-label="sticky table">
+        <Table stickyHeader={true} aria-label="sticky table">
           <TableHead>
-            <TableRow>
-              {headers.map((header) => (
+            <TableRow
+              style={{
+                position: "sticky",
+                top: 0,
+                backgroundColor: "#fff",
+                zIndex: 1,
+              }}
+            >
+              {headers?.map((header) => (
                 <TableCell
                   key={header}
                   style={{
@@ -128,9 +132,9 @@ const ViewOrder: React.FC<ViewOrderProps> = () => {
                     fontWeight: "bold",
                     textTransform: "uppercase",
                     fontFamily: "cursive",
+                    textAlign: "center",
                   }}
                   onClick={() => handleSort(toCamelCase(header.toLowerCase()))}
-                  align="center"
                 >
                   {header}
                 </TableCell>
@@ -138,13 +142,13 @@ const ViewOrder: React.FC<ViewOrderProps> = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {ordersData.map((order) => (
+            {filteredOrdersData?.map((order) => (
               <TableRow
                 hover
                 role="checkbox"
                 tabIndex={-1}
                 style={{ padding: "10px", fontFamily: "cursive" }}
-                onClick={() => handleClick(order.orderId)}
+                //onClick={() => handleClick(order.orderId)}
                 key={order?.orderId?.toString()} // Assuming orderId can be converted to string
               >
                 <TableCell
@@ -164,7 +168,6 @@ const ViewOrder: React.FC<ViewOrderProps> = () => {
                   align="center"
                 >
                   {order.orderDate}
-                  {/* Adjust date formatting */}
                 </TableCell>
                 <TableCell
                   style={{ minWidth: 120, fontFamily: "cursive" }}
@@ -200,22 +203,13 @@ const ViewOrder: React.FC<ViewOrderProps> = () => {
                   style={{ minWidth: 200, fontFamily: "cursive" }}
                   align="center"
                 >
-                  {order.billingAddress}
+                  {order.customerAddress}
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={ordersData?.length} // Total number of orders
-        rowsPerPage={rowsPerPage} // Rows per page
-        page={page} // Current page
-        onPageChange={handleChangePage} // Function to handle page changes
-        onRowsPerPageChange={handleChangeRowsPerPage} // Function to handle rows per page changes
-      />
     </Paper>
   ) : (
     <NoDataComponent

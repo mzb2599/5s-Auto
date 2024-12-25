@@ -1,4 +1,5 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef } from "react";
+import { format } from "date-fns";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -11,13 +12,13 @@ import Container from "@mui/material/Container";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
 import { Link } from "react-router-dom";
 import NoDataComponent from "../NoData.tsx";
 import { OrderContext } from "../../context/Orders.tsx";
-import { UserContext } from "../../context/Customer.tsx";
+import { CustomerContext } from "../../context/Customer.tsx";
 import { generateUniqueId } from "../../helpers/helpers.tsx";
+import { FormHelperText, Input } from "@mui/material";
+import { getCustomerId } from "../helpers/order.tsx";
 
 interface Order {
   orderId: string;
@@ -28,35 +29,87 @@ interface Order {
   orderCustomerId: string;
   paymentMethod: string;
   billingAddress: string;
+  paidAmount: number;
 }
 
 const OrderForm: React.FC = () => {
-  const { userData } = useContext(UserContext);
-  const { ordersData, setOrdersData } = useContext(OrderContext);
+  const { CustomerData, updateCustomer } = useContext(CustomerContext);
+  const { ordersData, addOrder } = useContext(OrderContext);
   const [order, setOrder] = useState<Order>({
-    orderId: generateUniqueId("ORD"),
-    orderDate: String(new Date()).substring(0, 25),
+    orderId: "",
+    orderDate: format(String(new Date()).substring(0, 25), "yyyy-MM-dd"),
     totalOrderValue: 0,
     discount: 0,
     numberOfItems: 0,
     orderCustomerId: "",
     paymentMethod: "",
     billingAddress: "",
+    paidAmount: 0,
   });
+  const imageRef = useRef();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setOrder({ ...order, [name]: value });
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    // Here you can handle form submission, e.g., send data to backend
-    console.log("Form Submitted:", order);
-    setOrdersData([...ordersData, order]);
+    // Get the filtered customer
+    const filteredCustomer = await getCustomerId(
+      CustomerData,
+      order.orderCustomerId
+    );
+
+    if (!filteredCustomer) {
+      alert("Customer not found");
+      return; // exit early if no customer found
+    }
+
+    let flag = 0; // Initialize flag
+
+    // Update customer data
+    CustomerData.map((customer) => {
+      if (customer.id === filteredCustomer.id) {
+        flag = 1;
+        return {
+          ...customer, // spread the existing customer data
+          lastOrderDate: order.orderDate, // set lastOrderDate to order.orderDate
+        };
+      }
+      debugger;
+      return customer; // always return the customer if id doesn't match
+    });
+
+    // If flag is still 0, show alert
+    if (flag === 0) {
+      alert("Invalid customer id");
+    } else {
+      console.log("filteredCustomer", filteredCustomer);
+      let billingAddress =
+        filteredCustomer.area +
+        "," +
+        filteredCustomer.city +
+        "," +
+        filteredCustomer.state;
+      // Add the order to ordersData
+
+      addOrder({
+        ...order,
+        orderId: generateUniqueId(ordersData?.length),
+        customerAddress: billingAddress,
+        itemDetails: {},
+        balanceAmount: order.totalOrderValue - order.paidAmount - order.discount,
+      });
+
+      // updateCustomer({
+      //   lastOrderDate: order.orderDate,
+      //   id: order.orderCustomerId,
+      // });
+    }
   };
 
-  return userData?.length > 0 ? (
+  return CustomerData?.length > 0 ? (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <Box
@@ -76,25 +129,15 @@ const OrderForm: React.FC = () => {
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 2 }}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Select
+              <TextField
                 required
                 fullWidth
                 id="orderCustomerId"
                 name="orderCustomerId"
+                label="CustomerId"
+                type="text"
                 onChange={handleChange}
-                label="Customer ID"
-              >
-                {/* Placeholder or default state */}
-                <MenuItem value="">
-                  <em>Select a customer</em>
-                </MenuItem>
-                {/* List of actual users */}
-                {userData?.map((user) => (
-                  <MenuItem key={user.id} value={user.id}>
-                    {user.id}
-                  </MenuItem>
-                ))}
-              </Select>
+              />
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -129,7 +172,7 @@ const OrderForm: React.FC = () => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12} mb={2}>
+            <Grid item xs={12} ml={14}>
               <RadioGroup
                 row
                 aria-label="paymentMethod"
@@ -141,32 +184,58 @@ const OrderForm: React.FC = () => {
                   control={<Radio />}
                   label="Cash"
                 />
-                <FormControlLabel
-                  value="card"
-                  control={<Radio />}
-                  label="Card"
-                />
                 <FormControlLabel value="UPI" control={<Radio />} label="UPI" />
+                <FormControlLabel
+                  value="Credit"
+                  control={<Radio />}
+                  label="Credit"
+                />
               </RadioGroup>
             </Grid>
             <Grid item xs={12}>
               <TextField
                 required
                 fullWidth
-                id="billingAddress"
-                name="billingAddress"
-                label="Billing Address"
-                multiline
-                rows={4}
+                id="paidAmount"
+                name="paidAmount"
+                label="Paid Amount"
+                type="number"
                 onChange={handleChange}
               />
             </Grid>
+            <Grid container item xs={12} alignItems="center">
+              <Grid item xs={4} style={{ marginRight: "16px" }}>
+                {" "}
+                <label
+                  htmlFor="order-image"
+                  style={{
+                    display: "inline",
+                    marginBottom: "8px",
+                    textAlign: "left",
+                  }}
+                >
+                  Order Image
+                </label>
+              </Grid>
+              <Grid item xs={8}>
+                {" "}
+                {/*- Adjusted width to take more space for the input */}
+                <Input
+                  id="order-image"
+                  type="file"
+                  inputProps={{ accept: "image/*" }}
+                  ref={imageRef}
+                />
+                <FormHelperText>Select an image to upload</FormHelperText>{" "}
+              </Grid>
+            </Grid>
           </Grid>
+
           <Button
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 3, mb: 2 }}
+            sx={{ mt: 1, mb: 8 }}
             onSubmit={handleSubmit}
           >
             Submit

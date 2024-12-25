@@ -2,14 +2,15 @@ import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import { Button } from "@mui/material";
-import { UserContext } from "../../context/Customer.tsx";
+import { CustomerContext } from "../../context/Customer.tsx";
 import NoDataComponent from "../NoData.tsx";
 import { Customer } from "../../context/Customer.tsx";
+import { Link } from "react-router-dom";
 export default function FullWidthTextField() {
-  const { userData } = React.useContext(UserContext);
-  const [custId, setCustId] = useState("");
+  const { CustomerData } = React.useContext(CustomerContext);
+  const [customerSearch, setCustId] = useState("");
   const [customers, setCustomers] = useState<Customer | null>(null);
-  const [flag,setFlag]=useState<boolean>(false)
+  const [flag, setFlag] = useState<boolean>(false);
 
   const handleChange = (e) => {
     setCustId(e.target.value);
@@ -17,12 +18,14 @@ export default function FullWidthTextField() {
 
   const handleSearch = () => {
     setCustomers(null);
-    const foundCustomer = userData.find((user) => user.id === custId);
-    console.log("foundCustomer", foundCustomer);
+    const foundCustomer = CustomerData.find(
+      (customer) => customer.id === customerSearch || customer.phone === customerSearch
+    );
     setCustomers(foundCustomer || null);
-    setFlag(true)
+    setFlag(true);
   };
-
+  const linkToCustomerOrders = `/orders/${customers?.id}`;
+  const linkEditCustomers = `/customer/${customers?.id}`;
   return (
     <Box
       sx={{
@@ -40,7 +43,7 @@ export default function FullWidthTextField() {
         fullWidth
         label="Customer ID"
         id="customer-id"
-        value={custId}
+        value={customerSearch}
         onChange={handleChange}
       />
       {/* <TextField
@@ -61,7 +64,7 @@ export default function FullWidthTextField() {
         onClick={() => {
           setCustomers(null);
           setCustId("");
-          setFlag(false)
+          setFlag(false);
         }}
       >
         Reset
@@ -114,10 +117,30 @@ export default function FullWidthTextField() {
             <div>
               <strong>Last Order date:</strong> {customers.lastOrderDate}
             </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Button variant="contained">
+                <strong>
+                  <Link to={linkToCustomerOrders}> Go to Orders</Link>{" "}
+                </strong>
+              </Button>
+              <Button variant="contained" style={{ marginLeft: "20px" }}>
+                <strong>
+                  <Link to={linkEditCustomers}>Edit details</Link>{" "}
+                </strong>
+              </Button>
+            </div>
           </div>
         </div>
       )}
-      {flag && custId && customers === null && <NoDataComponent data={"No Customer found for the ID"}/> }
+      {flag && customerSearch && customers === null && (
+        <NoDataComponent data={"No Customer found for the ID"} />
+      )}
     </Box>
   );
 }
