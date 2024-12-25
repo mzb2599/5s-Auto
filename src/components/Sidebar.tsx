@@ -7,6 +7,7 @@ import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
 import CssBaseline from "@mui/material/CssBaseline";
 import IconButton from "@mui/material/IconButton";
+import EmailIcon from '@mui/icons-material/Email';
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ListItem from "@mui/material/ListItem";
@@ -100,14 +101,14 @@ const SideNavBar = ({ handleDrawerOpen, handleDrawerClose, open }) => {
       route: "http://localhost:3000/add-customer",
       icon: <PersonAddIcon />,
     },
+    // {
+    //   text: "View Customers",
+    //   route: "http://localhost:3000/customers",
+    //   icon: <ViewListIcon />,
+    // },
     {
       text: "View Customers",
       route: "http://localhost:3000/customers",
-      icon: <ViewListIcon />,
-    },
-    {
-      text: "Past Customers",
-      route: "http://localhost:3000/past-customers",
       icon: <ViewListIcon />,
     },
     {
@@ -291,6 +292,7 @@ const SideNavBar = ({ handleDrawerOpen, handleDrawerClose, open }) => {
               />
             </ListItemButton>
           </ListItem>
+          
         </List>
       </Drawer>
     </>

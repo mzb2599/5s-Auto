@@ -8,14 +8,14 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { UserContext } from "../../context/Customer.tsx";
+import { CustomerContext } from "../../context/Customer.tsx";
 import NoDataComponent from "../NoData.tsx";
 import { Button } from "@mui/material";
 
 export default function StickyHeadTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const { userData, setUserData } = React.useContext(UserContext);
+  const { CustomerData, setCustomerData } = React.useContext(CustomerContext);
   const [sortType, setSortType] = useState("asc");
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -25,8 +25,8 @@ export default function StickyHeadTable() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-  const sortUserDataByHeader = (userData, header, sortOrder) => {
-    const sortedData = [...userData];
+  const sortUserDataByHeader = (CustomerData, header, sortOrder) => {
+    const sortedData = [...CustomerData];
 
     sortedData.sort((a, b) => {
       const valueA = a[header];
@@ -95,15 +95,13 @@ export default function StickyHeadTable() {
   ];
 
   const handleDelete = (id) => {
-    console.log(id);
-
-    setUserData(userData.filter((user) => user.id !== id));
+    setCustomerData(CustomerData?.filter((customer) => customer.id !== id));
   };
   const handleSort = (header) => {
     sortType === "asc" ? setSortType("desc") : setSortType("asc");
-    setUserData(sortUserDataByHeader(userData, header, sortType));
+    setCustomerData(sortUserDataByHeader(CustomerData, header, sortType));
   };
-  return userData ? (
+  return CustomerData ? (
     <Paper
       sx={{
         height: "max-content",
@@ -131,69 +129,69 @@ export default function StickyHeadTable() {
                   align="center"
                   //onClick={handleClick}
                 >
-                  {userData?.length > 0 ? header : null}
+                  {CustomerData?.length > 0 ? header : null}
                 </TableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {userData.map((user) => {
+            {CustomerData.map((customer) => {
               return (
                 <TableRow
                   hover
                   role="checkbox"
                   tabIndex={-1}
                   style={{ padding: "10px", fontFamily: "cursive" }}
-                  //onClick={handleClick(user.id)}
-                  key={user.id}
+                  //onClick={handleClick(customer.id)}
+                  key={customer.id}
                 >
                   <TableCell
                     style={{ minWidth: 50, fontFamily: "cursive" }}
                     align="center"
                   >
-                    {user.id}
+                    {customer.id}
                   </TableCell>
                   <TableCell
                     style={{ minWidth: 150, fontFamily: "cursive" }}
                     align="center"
                   >
-                    {user.name}
+                    {customer.name}
                   </TableCell>
                   <TableCell
                     style={{ minWidth: 60, fontFamily: "cursive" }}
                     align="center"
                   >
-                    {user.phone}
+                    {customer.phone}
                   </TableCell>
                   <TableCell
                     style={{ minWidth: 60, fontFamily: "cursive" }}
                     align="center"
                   >
-                    {user.city}
+                    {customer.city}
                   </TableCell>
                   <TableCell
                     style={{ minWidth: 60, fontFamily: "cursive" }}
                     align="center"
                   >
-                    {user.state}
+                    {customer.state}
                   </TableCell>
                   <TableCell
                     style={{ minWidth: 120, fontFamily: "cursive" }}
                     align="center"
                   >
-                    {user.TypeofWork}
+                    {customer.TypeofWork}
                   </TableCell>
                   <TableCell
                     style={{ minWidth: 50, fontFamily: "cursive" }}
                     align="center"
                   >
-                    {user.creditLimit}
+                    {customer.creditLimit}
                   </TableCell>
                   <TableCell
                     style={{ minWidth: 40, fontFamily: "cursive" }}
                     align="center"
                   >
-                    {user.paymentType}
+                    {customer.paymentType}
                   </TableCell>
                   <TableCell
                     style={{ minWidth: 40, fontFamily: "cursive" }}
@@ -201,7 +199,7 @@ export default function StickyHeadTable() {
                   >
                     <Button
                       style={{ backgroundColor: "#d32f2f", color: "white" }}
-                      onClick={() => handleDelete(user.id)}
+                      onClick={() => handleDelete(customer.id)}
                     >
                       Delete
                     </Button>
@@ -216,7 +214,7 @@ export default function StickyHeadTable() {
                 </TableRow>
               );
             })}
-            {userData?.length === 0 && (
+            {CustomerData?.length === 0 && (
               <div
                 style={{
                   display: "flex",
@@ -235,7 +233,7 @@ export default function StickyHeadTable() {
       <TablePagination
         rowsPerPageOptions={[10, 25, 100]}
         component="div"
-        count={userData?.length} // Total number of rows
+        count={CustomerData?.length} // Total number of rows
         rowsPerPage={rowsPerPage} // Rows per page
         page={page} // Current page
         onPageChange={handleChangePage} // Function to handle page changes

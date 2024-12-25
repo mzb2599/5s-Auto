@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import Button from "@mui/material/Button";
-import { UserContext } from "../../context/Customer.tsx";
+import { CustomerContext } from "../../context/Customer.tsx";
 import Avatar from "@mui/material/Avatar";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -33,13 +33,16 @@ const SignUpFormPagination = () => {
   const [isEmailValid, setIsEmailValid] = useState<boolean>(true);
   const [isCityValid, setIsCityValid] = useState<boolean>(true);
   const [isStateValid, setIsStateValid] = useState<boolean>(true);
-  const [isCountryValid, setIsCountryValid] = useState<boolean>(true);
-  const { userData, setUserData } = useContext(UserContext);
+  const [isAreaValid, setIsAreaValid] = useState<boolean>(true);
+  const [code, setCode] = useState("");
+  const { CustomerData, setCustomerData, addCustomer } =
+    useContext(CustomerContext);
   const generateUniqueId = (): string => {
-    return uuidv4();
+    let Ccount = CustomerData?.length + 1;
+    return code + String(Ccount);
   };
   const [userTemp, setUserTemp] = useState<Customer>({
-    id: generateUniqueId(),
+    id: "",
     name: " ",
     phone: " ",
     email: " ",
@@ -56,37 +59,6 @@ const SignUpFormPagination = () => {
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)*[a-zA-Z]{2,}))$/;
     return emailRegex.test(email);
   };
-  // const validateUserDetails = () => {
-  //   user.name?.length < 3 ? setIsNameValid(true) : setIsNameValid(false);
-  //   user.phone?.length !== 10 ? setIsPhoneValid(true) : setIsPhoneValid(false);
-  //   !validateEmail(user.email)
-  //     ? setIsEmailValid(validateEmail(user.email))
-  //     : setIsEmailValid(!validateEmail(user.email));
-  //   user.address.city?.length === 0
-  //     ? setIsCityValid(true)
-  //     : setIsCityValid(false);
-  //   user.address.state?.length === 0
-  //     ? setIsStateValid(true)
-  //     : setIsStateValid(false);
-  //   user.address.area?.length === 0
-  //     ? setIsCountryValid(true)
-  //     : setIsCountryValid(false);
-
-  //   return (
-  //     isNameValid &&
-  //     isEmailValid &&
-  //     isPhoneValid &&
-  //     isCityValid &&
-  //     isStateValid &&
-  //     isCountryValid
-  //   );
-  // };
-  // const nextPage = () => {
-  //   let validatePage = validateUserDetails();
-  //   validatePage
-  //     ? setCurrentPage(currentPage + 1)
-  //     : alert("Please fill all the fields properly before proceeding");
-  // };
 
   const validateUserDetails = async () => {
     const { name, phone, email, city, state, area } = userTemp;
@@ -96,18 +68,20 @@ const SignUpFormPagination = () => {
     setIsEmailValid(validateEmail(email));
     setIsCityValid(city?.length > 0);
     setIsStateValid(state?.length > 0);
-    setIsCountryValid(area?.length > 0);
+    setIsAreaValid(area?.length > 0);
   };
   const nextPage = async () => {
     await validateUserDetails(); //validateUserDetails();
     const { name, phone, email, city, state, area } = userTemp;
+    debugger;
     if (
       name?.length >= 3 &&
       phone?.length === 10 &&
       validateEmail(email) &&
       city?.length > 0 &&
       state?.length > 0 &&
-      area?.length > 0
+      area?.length > 0 &&
+      code?.length > 3
     ) {
       setCurrentPage(currentPage + 1);
     } else {
@@ -117,16 +91,21 @@ const SignUpFormPagination = () => {
 
   const prevPage = () => {
     setUserTemp(userTemp);
-    setUserData(userData);
+    setCustomerData(CustomerData);
     setCurrentPage(currentPage - 1);
   };
 
   const submitForm = () => {
     const { TypeofWork, creditLimit } = userTemp;
     if (TypeofWork?.length > 0 && creditLimit >= 0) {
-      setUserData([...userData, userTemp]);
+      // setCustomerData((prevData) => {
+      //   return CustomerData?.length>0 ? [...prevData, userTemp]:[userTemp];
+      // });
+      setUserTemp({ ...userTemp, id: generateUniqueId() });
+      debugger;
+      addCustomer(userTemp);
     } else {
-      alert("Please fill all the fields properly before proceeding");
+      alert("Please fill all the fields properly before submit");
     }
   };
 
@@ -211,7 +190,7 @@ const SignUpFormPagination = () => {
                       <p style={{ color: "red" }}>Not a valid email id</p>
                     )}
                   </Grid>
-                  <Grid item xs={4}>
+                  <Grid item xs={5} ml={1}>
                     <TextField
                       required
                       fullWidth
@@ -226,7 +205,7 @@ const SignUpFormPagination = () => {
                       <p style={{ color: "red" }}>City cannot be empty</p>
                     )}
                   </Grid>
-                  <Grid item xs={4}>
+                  <Grid item xs={5} ml={1}>
                     <TextField
                       required
                       fullWidth
@@ -241,20 +220,32 @@ const SignUpFormPagination = () => {
                       <p style={{ color: "red" }}>State cannot be empty</p>
                     )}
                   </Grid>
-                  <Grid item xs={4} mb={2}>
+                  <Grid item xs={5} ml={1}>
                     <TextField
                       required
                       fullWidth
                       name="area"
-                      label="Country"
+                      label="Area"
                       id="area"
                       autoComplete="address-area"
                       onChange={handleChange}
                       value={userTemp.area}
                     />
-                    {!isCountryValid && (
+                    {!isAreaValid && (
                       <p style={{ color: "red" }}>Country cannot be empty</p>
                     )}
+                  </Grid>
+                  <Grid item xs={5} ml={1}>
+                    <TextField
+                      required
+                      fullWidth
+                      name="code"
+                      label="Area code"
+                      id="code"
+                      autoComplete="code"
+                      onChange={(e) => setCode(e.target.value)}
+                      value={code}
+                    />
                   </Grid>
                 </Grid>
               </Box>
@@ -278,7 +269,7 @@ const SignUpFormPagination = () => {
                 <CarRepairIcon />
               </Avatar>
               <Typography component="h1" variant="h5">
-              TypeofWork & Payment
+                TypeofWork & Payment
               </Typography>
               <Box component="form" noValidate sx={{ mt: 2 }}>
                 <Grid container spacing={2}>
@@ -290,6 +281,18 @@ const SignUpFormPagination = () => {
                       fullWidth
                       id="TypeofWork"
                       label="TypeofWork"
+                      autoFocus
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={12}>
+                    <TextField
+                      autoComplete="TypeofWork"
+                      name="gstNo"
+                      required
+                      fullWidth
+                      id="gstNo"
+                      label="GST No"
                       autoFocus
                       onChange={handleChange}
                     />
@@ -322,11 +325,6 @@ const SignUpFormPagination = () => {
                         value="cash"
                         control={<Radio />}
                         label="cash"
-                      />
-                      <FormControlLabel
-                        value="card"
-                        control={<Radio />}
-                        label="card"
                       />
                       <FormControlLabel
                         value="UPI"

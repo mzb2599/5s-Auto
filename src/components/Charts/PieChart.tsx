@@ -1,20 +1,27 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import ReactECharts from 'echarts-for-react';
+import { OrderContext } from "../../context/Orders.tsx";
+import { getOrderCountByArea } from '../helpers/order.tsx';
+import {useNavigate} from 'react-router-dom'
 
-const HalfPieChart = () => {
-    const data = [
-        { value: 120, name: 'Area 1' },
-        { value: 200, name: 'Area 2' },
-        { value: 150, name: 'Area 3' },
-        { value: 80, name: 'Area 4' },
-        { value: 100, name: 'Area 5' },
-      ];
+const PieChart = () => {
+  const { ordersData } = useContext(OrderContext);
+
+  // Initialize the history object for navigation
+  const navigate=useNavigate();
+
+  // Transform the data to match ECharts pie chart format
+  const data = getOrderCountByArea(ordersData).map(item => ({
+    name: item.Area,
+    value: item.orderCount
+  }));
+
   // Define the option for the chart
   const options = {
     title: {
       text: 'Area-wise Order Sales',
       left: 'center',
-      top: '5%',
+      top: '55%',
       textStyle: {
         fontSize: 16,
       },
@@ -24,8 +31,6 @@ const HalfPieChart = () => {
     },
     legend: {
       orient: 'horizontal',
-      //top:"10%",
-      //bottom: '5%',
     },
     series: [
       {
@@ -34,7 +39,7 @@ const HalfPieChart = () => {
         radius: ['50%', '80%'],
         startAngle: 180, // Start from the bottom
         center: ['50%', '60%'], // Align in the center
-        data: data,
+        data: data, // Updated data format
         label: {
           show: true,
           formatter: '{b}: {c} ({d}%)',
@@ -46,7 +51,32 @@ const HalfPieChart = () => {
     ],
   };
 
-  return <ReactECharts option={options} style={{ height: '400px', width: '100%' }} />;
+  // Handle chart click events
+  const handleChartClick = (params: any) => {
+    // Extract the information about the clicked sector
+    const { name, value, percent } = params.data;
+
+    // Log or process the clicked sector's details
+    console.log(`Clicked on: ${name}`);
+    console.log(`Value: ${value}`);
+    console.log(`Percentage: ${percent}%`);
+
+    // Redirect to /customers
+    navigate(`/customers/areawise/${name}`)
+  };
+
+  // Set up the events for the chart (e.g., when a sector is clicked)
+  const onEvents = {
+    'click': handleChartClick,
+  };
+
+  return (
+    <ReactECharts
+      option={options}
+      style={{ height: '400px', width: '100%' }}
+      onEvents={onEvents} // Attach the event listener
+    />
+  );
 };
 
-export default HalfPieChart;
+export default PieChart;

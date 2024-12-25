@@ -1,28 +1,35 @@
-import React from "react";
+import React, { useContext } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ResponsiveContainer } from "recharts";
-import { Card, CardContent, Typography } from "@mui/material";
+import { OrderContext } from "../../context/Orders.tsx";
+import { getOrderCountByMonth,formatMonth, sortByMonth } from '../helpers/order.tsx';
+import { Typography } from "@mui/material";
 
-const data = [
-  { name: "Jan", sales: 240 },
-  { name: "Feb", sales: 2210 },
-  { name: "Mar", sales: 2290 },
-  { name: "Apr", sales: 300 },
-  { name: "May", sales: 2181 },
-  { name: "Jun", sales: 2500 },
-];
+const LineChartComponent = (props) => {
+  const { ordersData } = useContext(OrderContext);
+  const order = getOrderCountByMonth(ordersData).reverse();
 
-const LineChartComponent = ({heading}) => {
+  // Map the data correctly to use in the chart
+  const data = sortByMonth(order.map(order => {
+    return { month: formatMonth(order.month), orderCount: order.orderCount };
+  }));
+
+
   return (
-        <ResponsiveContainer width="100%" height={400}>
-          <LineChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Line type="linear" dataKey="sales" stroke="#880ED4" />
-          </LineChart>
-        </ResponsiveContainer>
+    <div>
+      {/* Chart Heading */}
+      <Typography variant="h6" align="center" gutterBottom>{"Monthly Order count"}</Typography> 
+      
+      <ResponsiveContainer width="100%" height={400}>
+        <LineChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="month" />
+          <YAxis allowDecimals={false}/>
+          <Tooltip />
+          <Legend />
+          <Line type="bump" dataKey="orderCount" stroke="#880ED4" />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
   );
 };
 
