@@ -8,6 +8,7 @@ import { styled } from "@mui/material/styles";
 import SignUpFormPagination from "./components/Customers/AddNewCustomer.tsx";
 import { UserProvider } from "./context/Customer.tsx";
 //import ViewCustomers from "./components/Customers/ViewCustomers.tsx";
+import PaymentUpdate from './components/PaymentUpdate.tsx'
 import "./App.css";
 import OrderForm from "./components/Orders/newOrder.tsx";
 import ViewOrder from "./components/Orders/ViewOrders.tsx";
@@ -18,6 +19,8 @@ import DownloadReport from "./components/download/Downloads.tsx";
 import EmailReport from "./components/download/emailReport.tsx";
 import EditCustomers from "./components/Customers/EditCustomers.tsx";
 import AreawiseCustomer from "./components/Customers/AreawiseCustomer.tsx";
+import { Login } from "@mui/icons-material";
+import AuthForms from "./user/login.tsx";
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
@@ -50,6 +53,7 @@ const App = () => {
             <Grid item xs={9} style={{ marginTop: "100px" }}>
               <Item>
                 <Routes>
+                  <Route path="/login" element={<AuthForms/>}/>
                   <Route path="/dashboard" element={<MainContent />} />
                   <Route
                     path="/add-customer"
@@ -59,6 +63,7 @@ const App = () => {
                   <Route path="/customers" element={<PastCustomers area={undefined} />} />
                   <Route path="/customers/areawise/:area" element={<AreawiseCustomer />} />
                   <Route path="/customer/:id" element={<EditCustomers />} />
+                  <Route path="/update-payment" element={<PaymentUpdate/>}/>
                   <Route path="/new-order" element={<OrderForm />} />
                   <Route path="/orders" element={<ViewOrder />} />
                   <Route path={`/orders/:id`} element={<ViewOrder />} />

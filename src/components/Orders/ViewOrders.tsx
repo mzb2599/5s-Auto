@@ -16,7 +16,6 @@ const ViewOrder: React.FC<ViewOrderProps> = () => {
   const [sortType, setSortType] = useState("asc");
   const id = useParams();
   useEffect(() => {
-    
     if (id?.id && Array.isArray(ordersData) && ordersData.length > 0) {
       const filteredOrders = ordersData?.filter((order) => {
         const customerId = parseInt(order.orderCustomerId);
@@ -28,16 +27,15 @@ const ViewOrder: React.FC<ViewOrderProps> = () => {
       });
 
       setFilteredOrdersData(filteredOrders); // Update state with filtered orders
-    }
-    else{
-      setFilteredOrdersData(ordersData)
+    } else {
+      setFilteredOrdersData(ordersData);
     }
   }, [ordersData, id]); // Run effect when either ordersData or id changes
 
   const sortUserDataByHeader = (CustomerData, header, sortOrder) => {
     const sortedData = [...CustomerData];
 
-    sortedData.sort((a, b) => {
+    sortedData?.sort((a, b) => {
       const valueA = a[header];
       const valueB = b[header];
 

@@ -12,6 +12,7 @@ export interface Customer {
   TypeofWork: string;
   creditLimit: Number;
   paymentType: string;
+  balanceAmount: Number;
 }
 
 // Create a context with default value
@@ -33,6 +34,7 @@ const UserProvider = (props) => {
     gstNumber: "",
     creditLimit: 0,
     paymentType: "cash",
+    balanceAmount:0,
   });
 
   // Fetch customers from the backend
@@ -77,7 +79,7 @@ const UserProvider = (props) => {
       const updatedData = await response.json();
       console.log("updated customer", updatedData);
 
-      const updatedCustomerData = CustomerData.map((c) =>
+      const updatedCustomerData = CustomerData?.map((c) =>
         c.id === updatedCustomer.id ? updatedData : c
       );
       setCustomerData(updatedCustomerData);

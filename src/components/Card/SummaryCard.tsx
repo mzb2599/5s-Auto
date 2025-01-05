@@ -10,28 +10,29 @@ const HarmonySummaryCard = () => {
 
   const [orderCount, setOrderCount] = useState(0);
   const [totalOrderValue, setTotalOrderValue] = useState(0);
-  const [discountValue,setDiscountValue]= useState(0);
+  const [discountValue, setDiscountValue] = useState(0);
   const [customerCount, setCustomerCount] = useState(0);
   var uniqueOrderIds = new Set();
   useEffect(() => {
     let revenue = 0;
     let discount = 0;
     ordersData?.forEach((order) => {
-      if (  new Date(order.orderDate).getMonth() === new Date().getMonth() &&
-      new Date(order.orderDate).getFullYear() === new Date().getFullYear()) {
+      if (
+        new Date(order.orderDate).getMonth() === new Date().getMonth() &&
+        new Date(order.orderDate).getFullYear() === new Date().getFullYear()
+      ) {
         uniqueOrderIds.add(order.orderId);
-        revenue += parseInt(order.totalOrderValue)-parseInt(order.discount);
-        discount+=parseInt(order.discount)
+        revenue += parseInt(order.totalOrderValue) - parseInt(order.discount);
+        discount += parseInt(order.discount);
       }
     });
-    setOrderCount(uniqueOrderIds.size);
+    setOrderCount(uniqueOrderIds?.size);
     setTotalOrderValue(revenue);
     setDiscountValue(discount);
   }, [ordersData]);
 
   useEffect(() => {
-
-    setCustomerCount(getCurrentMonthCustomers(ordersData))
+    setCustomerCount(getCurrentMonthCustomers(ordersData));
   }, [CustomerData, ordersData]);
 
   const cardsData = [
@@ -43,7 +44,7 @@ const HarmonySummaryCard = () => {
 
   return (
     <div className="summary-card-container">
-      {cardsData.map((card, index) => (
+      {cardsData?.map((card, index) => (
         <div key={index} className="card">
           <h1>{card.heading}</h1>
           <h3>{card.metric}</h3>

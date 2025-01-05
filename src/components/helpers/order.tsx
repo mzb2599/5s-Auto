@@ -1,4 +1,3 @@
-
 export const getOrderByUser = (ordersData: Array<{ order }>, id: Number) => {
   let sum = 0;
   ordersData.forEach((order) => {
@@ -10,7 +9,7 @@ export const getOrderByUser = (ordersData: Array<{ order }>, id: Number) => {
 };
 
 export const getOrderValueByMonth = (orders) => {
-  const orderValuesByMonth = orders.reduce((acc, order) => {
+  const orderValuesByMonth = orders?.reduce((acc, order) => {
     const monthYear = new Date(order.orderDate).toLocaleString("default", {
       month: "long",
       year: "numeric",
@@ -24,14 +23,17 @@ export const getOrderValueByMonth = (orders) => {
     return acc;
   }, {});
 
-  return Object.keys(orderValuesByMonth).map((month) => ({
-    month: month,
-    revenue: orderValuesByMonth[month],
-  }));
+  return (
+    orderValuesByMonth &&
+    Object.keys(orderValuesByMonth)?.map((month) => ({
+      month: month,
+      revenue: orderValuesByMonth[month],
+    }))
+  );
 };
 
 export const getOrderCountByMonth = (orders) => {
-  const orderValuesByMonth = orders.reduce((acc, order) => {
+  const orderValuesByMonth = orders?.reduce((acc, order) => {
     const monthYear = new Date(order.orderDate).toLocaleString("default", {
       month: "long",
       year: "numeric",
@@ -45,7 +47,7 @@ export const getOrderCountByMonth = (orders) => {
     return acc;
   }, {});
 
-  return Object.keys(orderValuesByMonth).map((month) => ({
+  return orderValuesByMonth && Object.keys(orderValuesByMonth)?.map((month) => ({
     month: month,
     orderCount: orderValuesByMonth[month],
   }));
@@ -73,7 +75,7 @@ export const sortByMonth = (data) => {
     Dec: 11,
   };
 
-  return data.sort((a, b) => {
+  return data?.sort((a, b) => {
     const [monthA, yearA] = a?.month?.split(" "); // e.g., ["Jan", "24"]
     const [monthB, yearB] = b?.month?.split(" ");
 
@@ -97,13 +99,21 @@ export const getOrderCountByArea = (orders) => {
     return acc;
   }, {});
 
-  return Object.keys(orderValuesByArea).map((area) => ({
-    Area: area,
-    orderCount: orderValuesByArea[area],
-  }));
+  return (
+    orderValuesByArea &&
+    Object.keys(orderValuesByArea)?.map((area) => ({
+      Area: area,
+      orderCount: orderValuesByArea[area],
+    }))
+  );
 };
 
 export const getCustomerId = (CustomerData, orderCustomerId) => {
-  return CustomerData.find(customer => orderCustomerId == customer.id);
+  return CustomerData.find((customer) => orderCustomerId == customer.id);
 };
 
+export const getTotalOrderValue = (itemDetails) => {
+  return itemDetails?.reduce((acc, item) => {
+    return acc + item.value;
+  }, 0);
+};

@@ -117,6 +117,9 @@ export default function FullWidthTextField() {
             <div>
               <strong>Last Order date:</strong> {customers.lastOrderDate}
             </div>
+            <div>
+              <strong>Balance Amount:</strong> {customers.balanceAmount}
+            </div>
             <div
               style={{
                 display: "flex",

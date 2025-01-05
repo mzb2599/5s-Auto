@@ -1,48 +1,48 @@
-import React, { useContext } from 'react';
-import ReactECharts from 'echarts-for-react';
+import React, { useContext } from "react";
+import ReactECharts from "echarts-for-react";
 import { OrderContext } from "../../context/Orders.tsx";
-import { getOrderCountByArea } from '../helpers/order.tsx';
-import {useNavigate} from 'react-router-dom'
+import { getOrderCountByArea } from "../helpers/order.tsx";
+import { useNavigate } from "react-router-dom";
 
 const PieChart = () => {
   const { ordersData } = useContext(OrderContext);
 
   // Initialize the history object for navigation
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
   // Transform the data to match ECharts pie chart format
-  const data = getOrderCountByArea(ordersData).map(item => ({
+  const data = getOrderCountByArea(ordersData)?.map((item) => ({
     name: item.Area,
-    value: item.orderCount
+    value: item.orderCount,
   }));
 
   // Define the option for the chart
   const options = {
     title: {
-      text: 'Area-wise Order Sales',
-      left: 'center',
-      top: '55%',
+      text: "Area-wise Order Sales",
+      left: "center",
+      top: "55%",
       textStyle: {
         fontSize: 16,
       },
     },
     tooltip: {
-      trigger: 'item',
+      trigger: "item",
     },
     legend: {
-      orient: 'horizontal',
+      orient: "horizontal",
     },
     series: [
       {
-        name: 'Orders',
-        type: 'pie',
-        radius: ['50%', '80%'],
+        name: "Orders",
+        type: "pie",
+        radius: ["50%", "80%"],
         startAngle: 180, // Start from the bottom
-        center: ['50%', '60%'], // Align in the center
+        center: ["50%", "60%"], // Align in the center
         data: data, // Updated data format
         label: {
           show: true,
-          formatter: '{b}: {c} ({d}%)',
+          formatter: "{b}: {c} ({d}%)",
         },
         labelLine: {
           show: true,
@@ -62,18 +62,18 @@ const PieChart = () => {
     console.log(`Percentage: ${percent}%`);
 
     // Redirect to /customers
-    navigate(`/customers/areawise/${name}`)
+    navigate(`/customers/areawise/${name}`);
   };
 
   // Set up the events for the chart (e.g., when a sector is clicked)
   const onEvents = {
-    'click': handleChartClick,
+    click: handleChartClick,
   };
 
   return (
     <ReactECharts
       option={options}
-      style={{ height: '400px', width: '100%' }}
+      style={{ height: "400px", width: "100%" }}
       onEvents={onEvents} // Attach the event listener
     />
   );

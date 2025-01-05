@@ -52,7 +52,7 @@ const DownloadReport = () => {
   const { ordersData } = useContext(OrderContext);
   const [reportType, setReportType] = useState("Customers");
   const [selectedFields, setSelectedFields] = useState(
-    CustomerFields.map((field) => ({ ...field, selected: true }))
+    CustomerFields?.map((field) => ({ ...field, selected: true }))
   );
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
@@ -63,8 +63,8 @@ const DownloadReport = () => {
   useEffect(() => {
     setSelectedFields(
       reportType === "Customers"
-        ? CustomerFields.map((field) => ({ ...field, selected: true }))
-        : OrderFields.map((field) => ({ ...field, selected: true }))
+        ? CustomerFields?.map((field) => ({ ...field, selected: true }))
+        : OrderFields?.map((field) => ({ ...field, selected: true }))
     );
   }, [reportType]);
 
@@ -93,7 +93,7 @@ const DownloadReport = () => {
 
   const handleFieldChange = (key) => {
     setSelectedFields((fields) =>
-      fields.map((field) =>
+      fields?.map((field) =>
         field.key === key ? { ...field, selected: !field.selected } : field
       )
     );
@@ -113,7 +113,7 @@ const DownloadReport = () => {
     }
     const headers = getSelectedHeaders();
     if (!headers.length) return [];
-    return currentData.map((item) =>
+    return currentData?.map((item) =>
       headers.reduce((acc, field) => {
         if (
           field.key === "itemDetails" &&
@@ -131,7 +131,7 @@ const DownloadReport = () => {
   const formatItemDetails = (details) => {
     if (Array.isArray(details)) {
       return details
-        .map((detail) => {
+        ?.map((detail) => {
           return detail.name
             ? `${detail.name} (Quantity: ${detail.quantity})`
             : "";
@@ -158,9 +158,9 @@ const DownloadReport = () => {
 
   const downloadPDF = () => {
     const doc = new jsPDF();
-    const headers = getSelectedHeaders().map((field) => field.label);
-    const rows = data.map((item) =>
-      getSelectedHeaders().map((field) => item[field.key])
+    const headers = getSelectedHeaders()?.map((field) => field.label);
+    const rows = data?.map((item) =>
+      getSelectedHeaders()?.map((field) => item[field.key])
     );
 
     doc.setFontSize(18);
@@ -202,18 +202,18 @@ const DownloadReport = () => {
 
     if (fileType === "CSV") {
       const csvContent = [
-        headers.map((header) => header.label).join(","),
-        ...data.map((row) =>
-          headers.map((header) => row[header.key]).join(",")
+        headers?.map((header) => header.label).join(","),
+        ...data?.map((row) =>
+          headers?.map((header) => row[header.key]).join(",")
         ),
       ].join("\n");
       const blob = new Blob([csvContent], { type: "text/csv" });
       body.append("file", blob, "report.csv");
     } else if (fileType === "PDF") {
       const doc = new jsPDF();
-      const headerLabels = headers.map((header) => header.label);
-      const rows = data.map((item) =>
-        headers.map((header) => item[header.key])
+      const headerLabels = headers?.map((header) => header.label);
+      const rows = data?.map((item) =>
+        headers?.map((header) => item[header.key])
       );
 
       doc.setFontSize(18);
@@ -260,9 +260,9 @@ const DownloadReport = () => {
   };
   // const downloadWord = () => {
   //   const doc = new Document();
-  //   const headers = getSelectedHeaders().map((field) => field.label);
-  //   const rows = data.map((item) =>
-  //     getSelectedHeaders().map((field) => item[field.key])
+  //   const headers = getSelectedHeaders()?.map((field) => field.label);
+  //   const rows = data?.map((item) =>
+  //     getSelectedHeaders()?.map((field) => item[field.key])
   //   );
 
   //   const table = new Table({
@@ -344,7 +344,7 @@ const DownloadReport = () => {
 
       <h2>Select Fields to be Downloaded</h2>
       <div className="grid-container">
-        {selectedFields.map((field) => (
+        {selectedFields?.map((field) => (
           <div
             key={field.key}
             className="grid-item"

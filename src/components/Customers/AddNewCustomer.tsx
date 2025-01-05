@@ -25,6 +25,7 @@ interface Customer {
   TypeofWork: string;
   creditLimit: number;
   paymentType: string;
+  balanceAmount:Number;
 }
 const SignUpFormPagination = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -52,6 +53,7 @@ const SignUpFormPagination = () => {
     TypeofWork: " ",
     creditLimit: 0,
     paymentType: "cash",
+    balanceAmount:0,
   });
 
   const validateEmail = (email: string) => {
