@@ -235,12 +235,14 @@ const SignUpFormPagination = () => {
                 </Grid>
               </Grid>
             </Box>
+            <Button onClick={submitForm}>Submit</Button>
+
           </Box>
+
         </Container>
       )}
 
       {/* Form Submission Button */}
-      <Button onClick={submitForm}>Submit</Button>
     </div>
   );
 };

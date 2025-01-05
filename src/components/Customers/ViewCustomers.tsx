@@ -28,7 +28,7 @@ export default function StickyHeadTable() {
   const sortUserDataByHeader = (CustomerData, header, sortOrder) => {
     const sortedData = [...CustomerData];
 
-    sortedData.sort((a, b) => {
+    sortedData?.sort((a, b) => {
       const valueA = a[header];
       const valueB = b[header];
 
@@ -70,7 +70,7 @@ export default function StickyHeadTable() {
     const words = input.split(/[\s\-_]+/);
 
     // Capitalize the first letter of all words after the first one
-    const camelCaseWords = words.map((word, index) => {
+    const camelCaseWords = words?.map((word, index) => {
       if (index === 0) {
         return word.toLowerCase(); // Keep the first word lowercase
       } else {
@@ -116,7 +116,7 @@ export default function StickyHeadTable() {
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              {headers.map((header) => (
+              {headers?.map((header) => (
                 <TableCell
                   key={header}
                   style={{
@@ -135,7 +135,7 @@ export default function StickyHeadTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {CustomerData.map((customer) => {
+            {CustomerData?.map((customer) => {
               return (
                 <TableRow
                   hover

@@ -52,7 +52,7 @@ const EmailReport = () => {
   const { ordersData } = useContext(OrderContext);
   const [reportType, setReportType] = useState("Customers");
   const [selectedFields, setSelectedFields] = useState(
-    CustomerFields.map((field) => ({ ...field, selected: true }))
+    CustomerFields?.map((field) => ({ ...field, selected: true }))
   );
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
@@ -65,14 +65,14 @@ const EmailReport = () => {
   useEffect(() => {
     setSelectedFields(
       reportType === "Customers"
-        ? CustomerFields.map((field) => ({ ...field, selected: true }))
-        : OrderFields.map((field) => ({ ...field, selected: true }))
+        ? CustomerFields?.map((field) => ({ ...field, selected: true }))
+        : OrderFields?.map((field) => ({ ...field, selected: true }))
     );
   }, [reportType]);
 
   const handleFieldChange = (key) => {
     setSelectedFields((fields) =>
-      fields.map((field) =>
+      fields?.map((field) =>
         field.key === key ? { ...field, selected: !field.selected } : field
       )
     );
@@ -87,7 +87,7 @@ const EmailReport = () => {
 
     const headers = getSelectedHeaders();
     if (!headers.length) return [];
-    return currentData.map((item) =>
+    return currentData?.map((item) =>
       headers.reduce((acc, field) => {
         acc[field.key] = item[field.key] || "";
         return acc;
@@ -119,12 +119,18 @@ const EmailReport = () => {
     };
 
     console.log(templateParams);
-    
-    emailjs.send("service_bnyi69v", "template_yldfo5w", templateParams, "HicOcgHhr87_xIH-I")
+
+    emailjs
+      .send(
+        "service_bnyi69v",
+        "template_yldfo5w",
+        templateParams,
+        "HicOcgHhr87_xIH-I"
+      )
       .then(
         (response) => {
           console.log("Email sent successfully", response);
-          alert('Email sent successfully');
+          alert("Email sent successfully");
         },
         (error) => {
           console.log("Error sending email", error);
@@ -137,17 +143,23 @@ const EmailReport = () => {
 
     if (fileType === "CSV") {
       // Convert data to CSV string
-      const headers = getSelectedHeaders().map((field) => field.label);
+      const headers = getSelectedHeaders()?.map((field) => field.label);
       const csvData = [
         headers,
-        ...data.map((item) => getSelectedHeaders().map((field) => item[field.key])),
+        ...data?.map((item) =>
+          getSelectedHeaders()?.map((field) => item[field.key])
+        ),
       ];
-      fileData = "data:text/csv;charset=utf-8," + csvData.map((row) => row.join(",")).join("\n");
+      fileData =
+        "data:text/csv;charset=utf-8," +
+        csvData?.map((row) => row.join(",")).join("\n");
     } else if (fileType === "PDF") {
       // Generate PDF and get base64 string
       const doc = new jsPDF();
-      const headers = getSelectedHeaders().map((field) => field.label);
-      const rows = data.map((item) => getSelectedHeaders().map((field) => item[field.key]));
+      const headers = getSelectedHeaders()?.map((field) => field.label);
+      const rows = data?.map((item) =>
+        getSelectedHeaders()?.map((field) => item[field.key])
+      );
 
       doc.setFontSize(18);
       doc.setFont("helvetica", "bold");
@@ -186,7 +198,11 @@ const EmailReport = () => {
   return (
     <div style={{ width: "800px", margin: "0 auto", padding: "20px" }}>
       <h1>Download Reports</h1>
-      <Grid container spacing={6} style={{ alignItems: "center", justifyContent: "center" }}>
+      <Grid
+        container
+        spacing={6}
+        style={{ alignItems: "center", justifyContent: "center" }}
+      >
         <Grid item sm={4}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
@@ -211,15 +227,30 @@ const EmailReport = () => {
 
       <h2>Select Fields to be Downloaded</h2>
       <div className="grid-container">
-        {selectedFields.map((field) => (
-          <div key={field.key} className="grid-item" style={{ display: "flex", alignItems: "center" }}>
-            <Checkbox checked={field.selected} onChange={() => handleFieldChange(field.key)} />
+        {selectedFields?.map((field) => (
+          <div
+            key={field.key}
+            className="grid-item"
+            style={{ display: "flex", alignItems: "center" }}
+          >
+            <Checkbox
+              checked={field.selected}
+              onChange={() => handleFieldChange(field.key)}
+            />
             <span style={{ paddingLeft: "8px" }}>{field.label}</span>
           </div>
         ))}
       </div>
 
-      <Grid container spacing={5} style={{ marginTop: "20px", alignItems: "center", justifyContent: "center" }}>
+      <Grid
+        container
+        spacing={5}
+        style={{
+          marginTop: "20px",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <Grid item sm={3}>
           <TextField
             label="Recipient Email"
@@ -246,9 +277,21 @@ const EmailReport = () => {
         </Grid>
       </Grid>
 
-      <Grid container spacing={6} style={{ marginTop: "20px", alignItems: "center", justifyContent: "center" }}>
+      <Grid
+        container
+        spacing={6}
+        style={{
+          marginTop: "20px",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <Grid item sm={3}>
-          <CSVLink data={data} headers={getSelectedHeaders()} filename="report.csv">
+          <CSVLink
+            data={data}
+            headers={getSelectedHeaders()}
+            filename="report.csv"
+          >
             <Button variant="contained">Download CSV</Button>
           </CSVLink>
         </Grid>
@@ -258,8 +301,10 @@ const EmailReport = () => {
             variant="contained"
             onClick={() => {
               const doc = new jsPDF();
-              const headers = getSelectedHeaders().map((field) => field.label);
-              const rows = data.map((item) => getSelectedHeaders().map((field) => item[field.key]));
+              const headers = getSelectedHeaders()?.map((field) => field.label);
+              const rows = data?.map((item) =>
+                getSelectedHeaders()?.map((field) => item[field.key])
+              );
 
               doc.setFontSize(18);
               doc.setFont("helvetica", "bold");

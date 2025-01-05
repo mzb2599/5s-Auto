@@ -1,32 +1,107 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { styled, Theme, CSSObject } from "@mui/material/styles";
-import MuiDrawer from "@mui/material/Drawer";
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import List from "@mui/material/List";
-import CssBaseline from "@mui/material/CssBaseline";
-import IconButton from "@mui/material/IconButton";
-import EmailIcon from '@mui/icons-material/Email';
-import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import EditNoteIcon from "@mui/icons-material/EditNote";
-import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import ViewListIcon from "@mui/icons-material/ViewList";
-import PersonSearchIcon from "@mui/icons-material/PersonSearch";
-import DownloadIcon from "@mui/icons-material/Download";
+import {
+  Drawer as MuiDrawer,
+  AppBar as MuiAppBar,
+  Toolbar,
+  List,
+  CssBaseline,
+  IconButton,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  AppBarProps as MuiAppBarProps,
+} from "@mui/material";
+import {
+  Menu as MenuIcon,
+  ChevronLeft as ChevronLeftIcon,
+  Dashboard as DashboardIcon,
+  EditNote as EditNoteIcon,
+  AddShoppingCart as AddShoppingCartIcon,
+  PersonAdd as PersonAddIcon,
+  ViewList as ViewListIcon,
+  PersonSearch as PersonSearchIcon,
+  Download as DownloadIcon,
+  CurrencyBitcoin,
+  CurrencyRupee,
+} from "@mui/icons-material";
 
-import { Divider } from "@mui/material";
-const drawerWidth = 220;
+// Constants
+const DRAWER_WIDTH = 220;
+const BASE_URL = "http://localhost:3000";
+const THEME_COLORS = {
+  primary: "#2b2d42",
+  text: "ghostwhite",
+  divider: "wheat",
+  iconButton: "#e0fbfc",
+} as const;
 
+// Types
+interface AppBarProps extends MuiAppBarProps {
+  open?: boolean;
+}
+
+interface NavItem {
+  text: string;
+  route: string;
+  icon: React.ReactElement;
+}
+
+interface SideNavBarProps {
+  handleDrawerOpen: () => void;
+  handleDrawerClose: () => void;
+  open: boolean;
+}
+
+// Navigation Data
+const NAV_ITEMS: Record<string, NavItem[]> = {
+  main: [
+    {
+      text: "Dashboard",
+      route: `${BASE_URL}/dashboard`,
+      icon: <DashboardIcon />,
+    },
+    {
+      text: "Orders",
+      route: `${BASE_URL}/orders`,
+      icon: <EditNoteIcon />,
+    },
+    {
+      text: "New Order",
+      route: `${BASE_URL}/new-order`,
+      icon: <AddShoppingCartIcon />,
+    },
+  ],
+  customers: [
+    {
+      text: "Add Customers",
+      route: `${BASE_URL}/add-customer`,
+      icon: <PersonAddIcon />,
+    },
+    {
+      text: "View Customers",
+      route: `${BASE_URL}/customers`,
+      icon: <ViewListIcon />,
+    },
+    {
+      text: "Customer Details",
+      route: `${BASE_URL}/search-customer`,
+      icon: <PersonSearchIcon />,
+    },
+    {
+      text: "Update Payment Details",
+      route: `${BASE_URL}/update-payment`,
+      icon: <CurrencyRupee />,
+    },
+  ],
+};
+
+// Styled Components
 const openedMixin = (theme: Theme): CSSObject => ({
-  width: drawerWidth,
+  width: DRAWER_WIDTH,
   transition: theme.transitions.create("width", {
     easing: theme.transitions.easing.easeIn,
     duration: theme.transitions.duration.enteringScreen,
@@ -51,13 +126,8 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "flex-end",
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
-
-interface AppBarProps extends MuiAppBarProps {
-  open?: boolean;
-}
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -68,8 +138,8 @@ const AppBar = styled(MuiAppBar, {
     duration: theme.transitions.duration.leavingScreen,
   }),
   ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
+    marginLeft: DRAWER_WIDTH,
+    width: `calc(100% - ${DRAWER_WIDTH}px)`,
     transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -80,7 +150,7 @@ const AppBar = styled(MuiAppBar, {
 const Drawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
-  width: drawerWidth,
+  width: DRAWER_WIDTH,
   flexShrink: 0,
   whiteSpace: "nowrap",
   boxSizing: "border-box",
@@ -94,51 +164,49 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
-const SideNavBar = ({ handleDrawerOpen, handleDrawerClose, open }) => {
-  const Customers = [
-    {
-      text: "Add Customers",
-      route: "http://localhost:3000/add-customer",
-      icon: <PersonAddIcon />,
-    },
-    // {
-    //   text: "View Customers",
-    //   route: "http://localhost:3000/customers",
-    //   icon: <ViewListIcon />,
-    // },
-    {
-      text: "View Customers",
-      route: "http://localhost:3000/customers",
-      icon: <ViewListIcon />,
-    },
-    {
-      text: "Customer Details",
-      route: "http://localhost:3000/search-customer",
-      icon: <PersonSearchIcon />,
-    },
-  ];
-  const Navbar = [
-    {
-      text: "Dashboard",
-      route: "http://localhost:3000/dashboard",
-      icon: <DashboardIcon />,
-    },
-    {
-      text: "Orders",
-      route: "http://localhost:3000/orders",
-      icon: <EditNoteIcon />,
-    },
-    {
-      text: "New Order",
-      route: "http://localhost:3000/new-order",
-      icon: <AddShoppingCartIcon />,
-    },
-  ];
+// Components
+const NavListItem: React.FC<{ item: NavItem; open: boolean }> = ({ item, open }) => (
+  <ListItem disablePadding sx={{ display: "block" }}>
+    <ListItemButton
+      component={Link}
+      to={item.route}
+      sx={{
+        minHeight: 48,
+        justifyContent: open ? "initial" : "center",
+        px: 2.5,
+        bgcolor: THEME_COLORS.primary,
+      }}
+    >
+      <ListItemIcon
+        sx={{
+          minWidth: 0,
+          mr: open ? 3 : "auto",
+          justifyContent: "center",
+          color: THEME_COLORS.text,
+        }}
+      >
+        {item.icon}
+      </ListItemIcon>
+      <ListItemText
+        primary={item.text}
+        sx={{
+          opacity: open ? 1 : 0,
+        }}
+      />
+    </ListItemButton>
+  </ListItem>
+);
+
+const SideNavBar: React.FC<SideNavBarProps> = ({
+  handleDrawerOpen,
+  handleDrawerClose,
+  open,
+}) => {
   return (
     <>
       <CssBaseline />
-      <AppBar position="fixed" open={open} style={{ backgroundColor: "" }}>
-        <Toolbar sx={{ backgroundColor: "#2b2d42" }}>
+      <AppBar position="fixed" open={open}>
+        <Toolbar sx={{ bgcolor: THEME_COLORS.primary }}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -154,145 +222,47 @@ const SideNavBar = ({ handleDrawerOpen, handleDrawerClose, open }) => {
           <h2>5 S SoftWear</h2>
         </Toolbar>
       </AppBar>
+
       <Drawer
         variant="permanent"
         open={open}
-        style={{ backgroundColor: "#2b2d42" }}
+        PaperProps={{
+          sx: { bgcolor: THEME_COLORS.primary },
+        }}
       >
-        <DrawerHeader style={{ backgroundColor: "#2b2d42" }}>
+        <DrawerHeader>
           <IconButton
             onClick={handleDrawerClose}
-            style={{ backgroundColor: "#e0fbfc" }}
+            sx={{ bgcolor: THEME_COLORS.iconButton }}
           >
             <ChevronLeftIcon />
           </IconButton>
         </DrawerHeader>
-        <Divider style={{ backgroundColor: "wheat" }} />
-        <List
-          style={{
-            backgroundColor: "#2b2d42",
-            color: "ghostwhite",
-            height: "100%",
-          }}
-        >
-          {Navbar.map((navItem, index) => (
-            <>
-              <ListItem
-                key={index}
-                disablePadding
-                sx={{ display: "block" }}
-                style={{ backgroundColor: "#2b2d42" }}
-              >
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: open ? "initial" : "center",
-                    px: 2.5,
-                    backgroundColor: "#2b2d42",
-                  }}
-                  component={Link}
-                  to={navItem.route}
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : "auto",
-                      justifyContent: "center",
-                      backgroundColor: "#2b2d42",
-                    }}
-                    style={{ color: "ghostwhite" }}
-                  >
-                    {navItem.icon}
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={navItem.text}
-                    sx={{
-                      opacity: open ? 1 : 0,
-                      backgroundColor: "#2b2d42",
-                    }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            </>
+
+        <List sx={{ color: THEME_COLORS.text, height: "100%" }}>
+          {/* Main Navigation Items */}
+          {NAV_ITEMS.main.map((item, index) => (
+            <NavListItem key={`main-${index}`} item={item} open={open} />
           ))}
-          <Divider style={{ backgroundColor: "wheat" }} />
-          {Customers.map((customer, index) => (
-            <>
-              <ListItem
-                key={index}
-                disablePadding
-                sx={{ display: "block" }}
-                style={{ backgroundColor: "#2b2d42" }}
-              >
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: open ? "initial" : "center",
-                    px: 2.5,
-                    backgroundColor: "#2b2d42",
-                  }}
-                  component={Link}
-                  to={customer.route}
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : "auto",
-                      justifyContent: "center",
-                      backgroundColor: "#2b2d42",
-                    }}
-                    style={{ color: "ghostwhite" }}
-                  >
-                    {customer.icon}
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={customer.text}
-                    sx={{
-                      opacity: open ? 1 : 0,
-                      backgroundColor: "#2b2d42",
-                    }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            </>
+
+          <Divider sx={{ bgcolor: THEME_COLORS.divider }} />
+
+          {/* Customer Navigation Items */}
+          {NAV_ITEMS.customers.map((item, index) => (
+            <NavListItem key={`customer-${index}`} item={item} open={open} />
           ))}
-          <Divider style={{ backgroundColor: "wheat" }} />
-          <ListItem
-            disablePadding
-            sx={{ display: "block" }}
-            style={{ backgroundColor: "#2b2d42" }}
-          >
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-                backgroundColor: "#2b2d42",
-              }}
-              component={Link}
-              to={"/download-report"}
-            >
-              <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : "auto",
-                  justifyContent: "center",
-                  backgroundColor: "#2b2d42",
-                }}
-                style={{ color: "ghostwhite" }}
-              >
-                <DownloadIcon />
-              </ListItemIcon>
-              <ListItemText
-                primary={"Download Reports"}
-                sx={{
-                  opacity: open ? 1 : 0,
-                  backgroundColor: "#2b2d42",
-                }}
-              />
-            </ListItemButton>
-          </ListItem>
-          
+
+          <Divider sx={{ bgcolor: THEME_COLORS.divider }} />
+
+          {/* Download Reports */}
+          <NavListItem
+            item={{
+              text: "Download Reports",
+              route: "/download-report",
+              icon: <DownloadIcon />,
+            }}
+            open={open}
+          />
         </List>
       </Drawer>
     </>

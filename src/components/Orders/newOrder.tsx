@@ -12,13 +12,18 @@ import Container from "@mui/material/Container";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import NoDataComponent from "../NoData.tsx";
 import { OrderContext } from "../../context/Orders.tsx";
 import { CustomerContext } from "../../context/Customer.tsx";
 import { generateUniqueId } from "../../helpers/helpers.tsx";
 import { FormHelperText, Input } from "@mui/material";
-import { getCustomerId } from "../helpers/order.tsx";
+import { getCustomerId, getTotalOrderValue } from "../helpers/order.tsx";
+
+interface OrderItem {
+  name: string;
+  value: number;
+}
 
 interface Order {
   orderId: string;
@@ -30,11 +35,13 @@ interface Order {
   paymentMethod: string;
   billingAddress: string;
   paidAmount: number;
+  itemDetails: OrderItem[];
 }
 
 const OrderForm: React.FC = () => {
   const { CustomerData, updateCustomer } = useContext(CustomerContext);
   const { ordersData, addOrder } = useContext(OrderContext);
+  const navigate =useNavigate();
   const [order, setOrder] = useState<Order>({
     orderId: "",
     orderDate: format(String(new Date()).substring(0, 25), "yyyy-MM-dd"),
@@ -42,15 +49,45 @@ const OrderForm: React.FC = () => {
     discount: 0,
     numberOfItems: 0,
     orderCustomerId: "",
+    itemDetails: [],
     paymentMethod: "",
     billingAddress: "",
     paidAmount: 0,
   });
   const imageRef = useRef();
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    index?: number
+  ) => {
     const { name, value } = event.target;
-    setOrder({ ...order, [name]: value });
+
+    if (index !== undefined && (name === "itemName" || name === "value")) {
+      // Handle item details updates
+      const updatedItems = [...order.itemDetails];
+      if (name === "itemName") {
+        updatedItems[index] = {
+          ...updatedItems[index],
+          name: value,
+        };
+      } else if (name === "value") {
+        updatedItems[index] = {
+          ...updatedItems[index],
+          value: Number(value) || 0,
+        };
+      }
+
+      setOrder({
+        ...order,
+        itemDetails: updatedItems,
+      });
+    } else {
+      // Handle other fields
+      setOrder((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -69,7 +106,7 @@ const OrderForm: React.FC = () => {
     let flag = 0; // Initialize flag
 
     // Update customer data
-    CustomerData.map((customer) => {
+    CustomerData?.map((customer) => {
       if (customer.id === filteredCustomer.id) {
         flag = 1;
         return {
@@ -92,25 +129,41 @@ const OrderForm: React.FC = () => {
         filteredCustomer.city +
         "," +
         filteredCustomer.state;
+      let creditCheck=true;
+      if(filteredCustomer?.balanceAmount +  getTotalOrderValue(order.itemDetails) - order.paidAmount > filteredCustomer.creditLimit)
+        creditCheck=window.confirm("Credit limit exceeded, do you still want to create order?")
+      
+      if (creditCheck){
       // Add the order to ordersData
-
       addOrder({
         ...order,
         orderId: generateUniqueId(ordersData?.length),
         customerAddress: billingAddress,
-        itemDetails: {},
-        balanceAmount: order.totalOrderValue - order.paidAmount - order.discount,
+        itemDetails: order.itemDetails,
+        totalOrderValue: getTotalOrderValue(order.itemDetails),
+        balanceAmount:
+          getTotalOrderValue(order.itemDetails) -
+          order.paidAmount -
+          order.discount,
       });
 
-      // updateCustomer({
-      //   lastOrderDate: order.orderDate,
-      //   id: order.orderCustomerId,
-      // });
+      updateCustomer({
+        lastOrderDate: order.orderDate,
+        id: order.orderCustomerId,
+        balanceAmount: filteredCustomer?.balanceAmount +  getTotalOrderValue(order.itemDetails) - order.paidAmount
+
+      });
+      alert('Order created successfully');
+      navigate('/dashboard')
+    }
+    else{
+      alert('Order cancelled')
+    }
     }
   };
 
   return CustomerData?.length > 0 ? (
-    <Container component="main" maxWidth="xs">
+    <Container component="main" maxWidth="sm">
       <CssBaseline />
       <Box
         sx={{
@@ -120,14 +173,14 @@ const OrderForm: React.FC = () => {
           alignItems: "center",
         }}
       >
-        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+        <Avatar sx={{ bgcolor: "secondary.main" }}>
           <ShoppingCartIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
           Order Details
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 2 }}>
-          <Grid container spacing={2}>
+          <Grid container>
             <Grid item xs={12}>
               <TextField
                 required
@@ -139,17 +192,56 @@ const OrderForm: React.FC = () => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12}>
-              <TextField
-                required
-                fullWidth
-                id="totalOrderValue"
-                name="totalOrderValue"
-                label="Total Order Value"
-                type="number"
-                onChange={handleChange}
-              />
+
+            <Grid container spacing={2} alignItems="center">
+              {order.itemDetails?.map((item, index) => (
+                <React.Fragment key={index}>
+                  <Grid item xs={8}>
+                    <TextField
+                      required
+                      fullWidth
+                      id={`itemName-${index}`}
+                      name="itemName"
+                      label="Enter product name"
+                      value={item.name}
+                      onChange={(e: any) => handleChange(e, index)} // Passing the index for item update
+                    />
+                  </Grid>
+                  <Grid item xs={3}>
+                    <TextField
+                      required
+                      fullWidth
+                      id={`itemValue-${index}`}
+                      name="value"
+                      label="Total Value"
+                      value={item.value}
+                      type="number"
+                      onChange={(e: any) => handleChange(e, index)} // Passing the index for item update
+                    />
+                  </Grid>
+                </React.Fragment>
+              ))}
+
+              {/* Add a new item button */}
+              <Grid item xs={12}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  onClick={() => {
+                    setOrder({
+                      ...order,
+                      itemDetails: [
+                        ...order.itemDetails,
+                        { name: "", value: 0 },
+                      ],
+                    });
+                  }} // Add a new empty item
+                >
+                  Add New Item
+                </Button>
+              </Grid>
             </Grid>
+
             <Grid item xs={12}>
               <TextField
                 required
@@ -172,6 +264,7 @@ const OrderForm: React.FC = () => {
                 onChange={handleChange}
               />
             </Grid>
+
             <Grid item xs={12} ml={14}>
               <RadioGroup
                 row
@@ -192,6 +285,7 @@ const OrderForm: React.FC = () => {
                 />
               </RadioGroup>
             </Grid>
+
             <Grid item xs={12}>
               <TextField
                 required
@@ -203,9 +297,9 @@ const OrderForm: React.FC = () => {
                 onChange={handleChange}
               />
             </Grid>
+
             <Grid container item xs={12} alignItems="center">
               <Grid item xs={4} style={{ marginRight: "16px" }}>
-                {" "}
                 <label
                   htmlFor="order-image"
                   style={{
@@ -218,15 +312,13 @@ const OrderForm: React.FC = () => {
                 </label>
               </Grid>
               <Grid item xs={8}>
-                {" "}
-                {/*- Adjusted width to take more space for the input */}
                 <Input
                   id="order-image"
                   type="file"
                   inputProps={{ accept: "image/*" }}
                   ref={imageRef}
                 />
-                <FormHelperText>Select an image to upload</FormHelperText>{" "}
+                <FormHelperText>Select an image to upload</FormHelperText>
               </Grid>
             </Grid>
           </Grid>
@@ -236,7 +328,6 @@ const OrderForm: React.FC = () => {
             fullWidth
             variant="contained"
             sx={{ mt: 1, mb: 8 }}
-            onSubmit={handleSubmit}
           >
             Submit
           </Button>

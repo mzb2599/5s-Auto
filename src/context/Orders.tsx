@@ -7,7 +7,7 @@ export interface Order {
   discount: number;
   numberOfItems: number;
   orderCustomerId: string;
-  itemDetails: object;
+  itemDetails: Array<{}>;
   paymentMethod: string;
   balanceAmount: number;
   customerAddress: string;
@@ -24,7 +24,7 @@ const OrderProvider = (props) => {
     discount: 0,
     numberOfItems: 0,
     orderCustomerId: "",
-    itemDetails: {},
+    itemDetails: [{}],
     paymentMethod: "cash",
     balanceAmount: 0,
     customerAddress: "",
@@ -42,18 +42,6 @@ const OrderProvider = (props) => {
       .catch((error) => console.error("Error fetching orders:", error));
   }, []);
 
-  // Effect to handle the addition of a new order based on changes in ordersData
-  // useEffect(() => {
-  //   if (ordersData.length > 0) {
-  //     const latestOrder = ordersData[ordersData.length - 1]; // Get the latest added order
-  //     // Ensure the new order is not the same as the last added order
-  //     if (latestOrder.orderId !== lastAddedOrderId) {
-  //       addOrder(latestOrder); // Trigger the addOrder function
-  //       setLastAddedOrderId(latestOrder.orderId); // Update lastAddedOrderId to the current one
-  //     }
-  //   }
-  // }, [ordersData]); // Trigger when ordersData changes (i.e., when it’s updated)
-
   // Function to add a new order to the database and update the state
   const addOrder = async (newOrder: Order) => {
     try {
@@ -65,9 +53,10 @@ const OrderProvider = (props) => {
         body: JSON.stringify(newOrder),
       });
       const addedOrder = await response.json();
-      setOrdersData((prevOrders) => [...prevOrders, addedOrder]); 
+      setOrdersData((prevOrders) =>
+        prevOrders ? [...prevOrders, addedOrder] : [addedOrder]
+      );
       console.log("ORDER CREATED", addedOrder);
-      
     } catch (error) {
       console.error("Error adding order:", error);
     }
@@ -88,12 +77,11 @@ const OrderProvider = (props) => {
       );
       const updatedData = await response.json();
       setOrdersData((prevOrders) =>
-        prevOrders.map((order) =>
+        prevOrders?.map((order) =>
           order.orderId === updatedOrder.orderId ? updatedData : order
         )
       );
       console.log(updatedData);
-      
     } catch (error) {
       console.error("Error updating order:", error);
     }
