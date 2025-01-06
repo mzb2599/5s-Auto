@@ -19,7 +19,6 @@ export const getCurrentMonthCustomers = (ordersData) => {
 };
 
 export const getLastOrderDate = (orderData, customerId) => {
-  let c = 0;
   let customerOrders = orderData?.map(
     (order) => order.customerId === customerId
   );
@@ -33,5 +32,5 @@ export const getLastOrderDate = (orderData, customerId) => {
   });
 
   // Return the orderDate of the latest order
-  return customerOrders?.orderDate;
+  //return customerOrders?.orderDate;
 };

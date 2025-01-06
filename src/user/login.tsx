@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   Box,
   Card,
@@ -16,24 +16,19 @@ import {
   Login,
   PersonAdd
 } from '@mui/icons-material';
+import { UserContext } from '../context/user.tsx';
 
 const AuthForms = () => {
-  const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    confirmPassword: '',
-    name: ''
-  });
+  const {userData, setUserData, addUser, isLogin, setIsLogin} = useContext(UserContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+    addUser(userData);    
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setUserData({ ...userData, [e.target.name]: e.target.value });
   };
 
   return (
@@ -43,10 +38,10 @@ const AuthForms = () => {
           minHeight: '100vh',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center'
+          justifyContent: 'center',
         }}
       >
-        <Card sx={{ width: '100%', p: 2 }}>
+        <Card sx={{ width: '100%' }}>
           <CardContent>
             <Typography variant="h5" align="center" gutterBottom>
               {isLogin ? 'Login' : 'Sign Up'}
@@ -55,7 +50,7 @@ const AuthForms = () => {
               {isLogin ? 'Welcome back!' : 'Create your account'}
             </Typography>
 
-            <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+            <Box component="form" onSubmit={handleSubmit}>
               {!isLogin && (
                 <TextField
                   margin="normal"
@@ -65,7 +60,7 @@ const AuthForms = () => {
                   label="Full Name"
                   name="name"
                   autoComplete="name"
-                  value={formData.name}
+                  value={userData.name}
                   onChange={handleChange}
                 />
               )}
@@ -78,7 +73,7 @@ const AuthForms = () => {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
-                value={formData.email}
+                value={userData.email}
                 onChange={handleChange}
               />
 
@@ -91,7 +86,7 @@ const AuthForms = () => {
                 type={showPassword ? 'text' : 'password'}
                 id="password"
                 autoComplete="current-password"
-                value={formData.password}
+                value={userData.password}
                 onChange={handleChange}
                 InputProps={{
                   endAdornment: (
@@ -116,7 +111,7 @@ const AuthForms = () => {
                   label="Confirm Password"
                   type="password"
                   id="confirmPassword"
-                  value={formData.confirmPassword}
+                  value={userData.confirmPassword}
                   onChange={handleChange}
                 />
               )}
@@ -127,6 +122,7 @@ const AuthForms = () => {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
                 startIcon={isLogin ? <Login /> : <PersonAdd />}
+                onClick={handleSubmit}
               >
                 {isLogin ? 'Login' : 'Sign Up'}
               </Button>

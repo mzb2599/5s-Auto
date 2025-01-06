@@ -13,13 +13,14 @@ export interface Customer {
   creditLimit: Number;
   paymentType: string;
   balanceAmount: Number;
+  lastOrderData: Date
 }
 
 // Create a context with default value
 const CustomerContext = createContext({});
 
 // Define a functional component to provide the context
-const UserProvider = (props) => {
+const CustomerProvider = (props) => {
   // Define initial state using useState hook
   const [CustomerData, setCustomerData] = useState<Customer[]>([]);
   const [customer, setCustomer] = useState<Customer>({
@@ -105,4 +106,4 @@ const UserProvider = (props) => {
   );
 };
 
-export { CustomerContext, UserProvider };
+export { CustomerContext, CustomerProvider };
