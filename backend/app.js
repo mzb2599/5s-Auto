@@ -4,14 +4,16 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const app = express();
 require("./controller/mailer");
+require("dotenv").config();
 const morgan = require("morgan");
 
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
+app.use(morgan("tiny"));
+
 // MongoDB connection string
-const mongoURI =
-  "mongodb+srv://mzakib:mzaki2599@5s-cluster.0cad97c.mongodb.net/";
+const mongoURI = process.env.MONGODB_URI
 
 // Connect to MongoDB
 mongoose
@@ -23,15 +25,14 @@ mongoose
 const orderRoutes = require("./routes/orders");
 const customerRoutes = require("./routes/customers");
 const emailRoutes = require("./routes/mail");
+const userRoutes = require("./routes/user");
 
 // Use routes
 app.use("/api/orders", orderRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/email", emailRoutes);
-app.use(morgan("tiny"));
+app.use("/api", userRoutes);
 
-//Email scheduler
-//sendEmail(,'D:\\ASIYA_SSC.pdf');
 
 // Start server
 const PORT = process.env.PORT || 5000;

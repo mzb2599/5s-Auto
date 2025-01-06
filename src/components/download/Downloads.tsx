@@ -12,15 +12,55 @@ import {
   Button,
   Grid,
   TextField,
+  SelectChangeEvent,
+  Alert,
+  Snackbar,
 } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { jsPDF } from "jspdf";
-//import { Document, Packer, Paragraph, TextRun, Table, AlignmentType } from "docx";
 import "../../css/downloads.css";
-import "../../css/downloads.css";
+import dayjs, { Dayjs } from 'dayjs';
 
-const CustomerFields = [
+interface Field {
+  label: string;
+  key: string;
+  selected?: boolean;
+}
+
+interface Customer {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  city: string;
+  state: string;
+  area: string;
+  TypeofWork: string;
+  credit: number;
+  creditLimit: number;
+  paymentType: string;
+}
+
+interface OrderItem {
+  name: string;
+  quantity: number;
+}
+
+interface Order {
+  orderId: string;
+  orderDate: string;
+  totalOrderValue: number;
+  discount: number;
+  numberOfItems: number;
+  itemDetails: OrderItem[];
+  orderCustomerId: string;
+  paymentMethod: string;
+  balanceAmount: number;
+  customerAddress: string;
+}
+
+const CustomerFields: Field[] = [
   { label: "ID", key: "id" },
   { label: "Name", key: "name" },
   { label: "Phone", key: "phone" },
@@ -34,7 +74,7 @@ const CustomerFields = [
   { label: "Pay Type", key: "paymentType" },
 ];
 
-const OrderFields = [
+const OrderFields: Field[] = [
   { label: "Order ID", key: "orderId" },
   { label: "Order Date", key: "orderDate" },
   { label: "Total Order Value", key: "totalOrderValue" },
@@ -47,125 +87,124 @@ const OrderFields = [
   { label: "Customer Address", key: "customerAddress" },
 ];
 
-const DownloadReport = () => {
+const DownloadReport: React.FC = () => {
   const { CustomerData: customerData } = useContext(CustomerContext);
   const { ordersData } = useContext(OrderContext);
-  const [reportType, setReportType] = useState("Customers");
-  const [selectedFields, setSelectedFields] = useState(
-    CustomerFields?.map((field) => ({ ...field, selected: true }))
+  const [reportType, setReportType] = useState<"Customers" | "Orders">("Customers");
+  const [selectedFields, setSelectedFields] = useState<Field[]>(
+    CustomerFields.map((field) => ({ ...field, selected: true }))
   );
-  const [startDate, setStartDate] = useState();
-  const [endDate, setEndDate] = useState();
-  const [cardLabel, setCardLabel] = useState("Report");
-  const [data, setData] = useState([]);
-  const [fileType, setFileType] = useState("CSV");
+  const [startDate, setStartDate] = useState<Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<Dayjs | null>(null);
+  const [cardLabel] = useState<string>("Report");
+  const [data, setData] = useState<any[]>([]);
+  const [fileType, setFileType] = useState<"CSV" | "PDF">("CSV");
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error';
+  }>({
+    open: false,
+    message: '',
+    severity: 'success'
+  });
 
   useEffect(() => {
     setSelectedFields(
       reportType === "Customers"
-        ? CustomerFields?.map((field) => ({ ...field, selected: true }))
-        : OrderFields?.map((field) => ({ ...field, selected: true }))
+        ? CustomerFields.map((field) => ({ ...field, selected: true }))
+        : OrderFields.map((field) => ({ ...field, selected: true }))
     );
   }, [reportType]);
 
-  const filterOrdersByDate = (orders) => {
-    if (!startDate || !endDate) return orders; // If no date is selected, return all orders
-    return orders?.filter((order) => {
-      const orderDate = new Date(order.orderDate);
-      return orderDate >= startDate && orderDate <= endDate; // Filter orders within the range
+  const filterOrdersByDate = (orders: Order[]) => {
+    if (!startDate || !endDate) return orders;
+    return orders.filter((order) => {
+      const orderDate = dayjs(order.orderDate);
+      return orderDate.isAfter(startDate) && orderDate.isBefore(endDate);
     });
   };
-  const filterCustomersByOrderDate = (customers) => {
-    if (!startDate || !endDate) return customers; // If no date range, return all customers
-    return customers?.filter((customer) => {
-      // Get all orders for the current customer
-      const customerOrders = ordersData?.filter(
+
+  const filterCustomersByOrderDate = (customers: Customer[]) => {
+    if (!startDate || !endDate) return customers;
+    return customers.filter((customer) => {
+      const customerOrders = ordersData.filter(
         (order) => order.orderCustomerId === customer.id
       );
-
-      // Check if any order falls within the date range
       return customerOrders.some((order) => {
-        const orderDate = new Date(order.orderDate);
-        return orderDate >= startDate && orderDate <= endDate; // Check if the order date is within the range
+        const orderDate = dayjs(order.orderDate);
+        return orderDate.isAfter(startDate) && orderDate.isBefore(endDate);
       });
     });
   };
 
-  const handleFieldChange = (key) => {
+  const handleFieldChange = (key: string) => {
     setSelectedFields((fields) =>
-      fields?.map((field) =>
+      fields.map((field) =>
         field.key === key ? { ...field, selected: !field.selected } : field
       )
     );
   };
 
   const getSelectedHeaders = () =>
-    selectedFields?.filter((field) => field.selected);
+    selectedFields.filter((field) => field.selected);
 
-  const getSelectedData = () => {
-    let currentData = reportType === "Customers" ? customerData : ordersData;
-    if (!currentData || !currentData.length) return [];
-
-    if (reportType === "Orders") {
-      currentData = filterOrdersByDate(currentData); // <-- Apply date filter here
-    } else {
-      currentData = filterCustomersByOrderDate(currentData);
-    }
-    const headers = getSelectedHeaders();
-    if (!headers.length) return [];
-    return currentData?.map((item) =>
-      headers.reduce((acc, field) => {
-        if (
-          field.key === "itemDetails" &&
-          typeof item[field.key] === "object"
-        ) {
-          acc[field.key] = formatItemDetails(item[field.key]);
-        } else {
-          acc[field.key] = item[field.key] || "";
-        }
-        return acc;
-      }, {})
-    );
-  };
-
-  const formatItemDetails = (details) => {
+  const formatItemDetails = (details: OrderItem[] | object): string => {
     if (Array.isArray(details)) {
       return details
-        ?.map((detail) => {
+        .map((detail) => {
           return detail.name
             ? `${detail.name} (Quantity: ${detail.quantity})`
             : "";
         })
         .join(", ");
-    } else if (typeof details === "object") {
-      return JSON.stringify(details, null, 2);
     }
-    return JSON.stringify(details);
+    return JSON.stringify(details, null, 2);
+  };
+
+  const getSelectedData = () => {
+    let currentData = reportType === "Customers" ? customerData : ordersData;
+    if (!currentData?.length) return [];
+
+    currentData = reportType === "Orders" 
+      ? filterOrdersByDate(currentData)
+      : filterCustomersByOrderDate(currentData);
+
+    const headers = getSelectedHeaders();
+    if (!headers.length) return [];
+
+    return currentData.map((item) =>
+      headers.reduce((acc, field) => ({
+        ...acc,
+        [field.key]: field.key === "itemDetails" && typeof item[field.key] === "object"
+          ? formatItemDetails(item[field.key])
+          : item[field.key] || ""
+      }), {})
+    );
   };
 
   useEffect(() => {
-    const selectedData = getSelectedData();
-    setData(selectedData);
-  }, [customerData, ordersData, selectedFields, reportType]);
+    setData(getSelectedData());
+  }, [customerData, ordersData, selectedFields, reportType, startDate, endDate]);
 
-  const handleFileTypeChange = (event) => {
-    setFileType(event.target.value);
+  const handleFileTypeChange = (event: SelectChangeEvent) => {
+    setFileType(event.target.value as "CSV" | "PDF");
   };
 
-  const handleReportTypeChange = (event) => {
-    setReportType(event.target.value);
+  const handleReportTypeChange = (event: SelectChangeEvent) => {
+    setReportType(event.target.value as "Customers" | "Orders");
   };
 
   const downloadPDF = () => {
     const doc = new jsPDF();
-    const headers = getSelectedHeaders()?.map((field) => field.label);
-    const rows = data?.map((item) =>
-      getSelectedHeaders()?.map((field) => item[field.key])
+    const headers = getSelectedHeaders().map((field) => field.label);
+    const rows = data.map((item) =>
+      getSelectedHeaders().map((field) => item[field.key]?.toString() || '')
     );
 
     doc.setFontSize(18);
     doc.setFont("helvetica", "bold");
-    doc.text(cardLabel || "Report", 20, 10);
+    doc.text(cardLabel, 20, 10);
 
     doc.autoTable({
       head: [headers],
@@ -191,142 +230,24 @@ const DownloadReport = () => {
       margin: { top: 30, left: 10, bottom: 10, right: 10 },
     });
 
-    doc.save(`${cardLabel || "report"}.pdf`);
+    doc.save(`${cardLabel}.pdf`);
   };
 
-  // Define `sendReportToServer` inside the component
-
-  const sendReportToServer = async (fileType, data, headers) => {
-    const url = "http://localhost:3000/api/email/send-report"; // Replace with your server URL
-    const body = new FormData();
-
-    if (fileType === "CSV") {
-      const csvContent = [
-        headers?.map((header) => header.label).join(","),
-        ...data?.map((row) =>
-          headers?.map((header) => row[header.key]).join(",")
-        ),
-      ].join("\n");
-      const blob = new Blob([csvContent], { type: "text/csv" });
-      body.append("file", blob, "report.csv");
-    } else if (fileType === "PDF") {
-      const doc = new jsPDF();
-      const headerLabels = headers?.map((header) => header.label);
-      const rows = data?.map((item) =>
-        headers?.map((header) => item[header.key])
-      );
-
-      doc.setFontSize(18);
-      doc.setFont("helvetica", "bold");
-      doc.text("Report", 20, 10);
-      doc.autoTable({
-        head: [headerLabels],
-        body: rows,
-        startY: 20,
-      });
-
-      const pdfBlob = doc.output("blob");
-      body.append("file", pdfBlob, "report.pdf");
-    }
-
-    body.append("fileType", fileType);
-
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        body: body,
-      });
-
-      if (response.ok) {
-        alert("Report sent successfully!");
-      } else {
-        alert("Failed to send the report.");
-      }
-    } catch (error) {
-      console.error("Error sending report:", error);
-      alert("An error occurred while sending the report.");
-    }
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
-
-  // Modify the button onClick handlers
-
-  const handleEmailReport = () => {
-    const headers = getSelectedHeaders();
-    if (!headers.length) {
-      alert("No fields selected for the report.");
-      return;
-    }
-    sendReportToServer(fileType, data, headers);
-  };
-  // const downloadWord = () => {
-  //   const doc = new Document();
-  //   const headers = getSelectedHeaders()?.map((field) => field.label);
-  //   const rows = data?.map((item) =>
-  //     getSelectedHeaders()?.map((field) => item[field.key])
-  //   );
-
-  //   const table = new Table({
-  //     rows: rows.length + 1,
-  //     columns: headers.length,
-  //     width: { size: 100, type: "pct" },
-  //     alignment: "center",
-  //   });
-
-  //   headers.forEach((header, index) => {
-  //     table.getCell(0, index).add(
-  //       new Paragraph({
-  //         text: header,
-  //         alignment: AlignmentType.CENTER,
-  //       })
-  //     );
-  //   });
-
-  //   rows.forEach((row, rowIndex) => {
-  //     row.forEach((cell, cellIndex) => {
-  //       table.getCell(rowIndex + 1, cellIndex).add(
-  //         new Paragraph({
-  //           children: [new TextRun(cell)],
-  //           alignment: AlignmentType.CENTER,
-  //         })
-  //       );
-  //     });
-  //   });
-
-  //   doc.addSection({
-  //     children: [
-  //       new Paragraph({
-  //         text: cardLabel,
-  //         heading: "Heading1",
-  //       }),
-  //       table,
-  //     ],
-  //   });
-
-  //   Packer.toBlob(doc).then((blob) => {
-  //     const url = URL.createObjectURL(blob);
-  //     const a = document.createElement("a");
-  //     a.href = url;
-  //     a.download = `${cardLabel || "report"}.docx`;
-  //     a.click();
-  //     URL.revokeObjectURL(url);
-  //   });
-  // };
 
   return (
     <div style={{ width: "800px", margin: "0 auto", padding: "20px" }}>
       <h1>Download Reports</h1>
-      <Grid
-        container
-        spacing={6}
-        style={{ alignItems: "center", justifyContent: "center" }}
-      >
+      <Grid container spacing={6} sx={{ alignItems: "center", justifyContent: "center" }}>
         <Grid item sm={4}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
               label="Start Date"
               value={startDate}
               onChange={(newValue) => setStartDate(newValue)}
-              renderInput={(params) => <TextField {...params} fullWidth />}
+              slotProps={{ textField: { fullWidth: true } }}
             />
           </LocalizationProvider>
         </Grid>
@@ -336,7 +257,7 @@ const DownloadReport = () => {
               label="End Date"
               value={endDate}
               onChange={(newValue) => setEndDate(newValue)}
-              renderInput={(params) => <TextField {...params} fullWidth />}
+              slotProps={{ textField: { fullWidth: true } }}
             />
           </LocalizationProvider>
         </Grid>
@@ -344,7 +265,7 @@ const DownloadReport = () => {
 
       <h2>Select Fields to be Downloaded</h2>
       <div className="grid-container">
-        {selectedFields?.map((field) => (
+        {selectedFields.map((field) => (
           <div
             key={field.key}
             className="grid-item"
@@ -362,7 +283,7 @@ const DownloadReport = () => {
       <Grid
         container
         spacing={5}
-        style={{
+        sx={{
           marginTop: "20px",
           alignItems: "center",
           justifyContent: "center",
@@ -374,7 +295,6 @@ const DownloadReport = () => {
             <Select value={fileType} onChange={handleFileTypeChange}>
               <MenuItem value="CSV">CSV</MenuItem>
               <MenuItem value="PDF">PDF</MenuItem>
-              {/* <MenuItem value="Word">Word</MenuItem> */}
             </Select>
           </FormControl>
         </Grid>
@@ -389,33 +309,34 @@ const DownloadReport = () => {
         </Grid>
         <Grid item sm={6}>
           {fileType === "CSV" && (
-            <>
-              <CSVLink
-                data={data}
-                headers={getSelectedHeaders()}
-                filename={`${cardLabel || "report"}.csv`}
-                style={{ textDecoration: "none" }}
-              >
-                <Button variant="contained" style={{ margin: "15px" }}>
-                  Download CSV
-                </Button>
-              </CSVLink>
-            </>
+            <CSVLink
+              data={data}
+              headers={getSelectedHeaders()}
+              filename={`${cardLabel}.csv`}
+              style={{ textDecoration: "none" }}
+            >
+              <Button variant="contained" sx={{ margin: "15px" }}>
+                Download CSV
+              </Button>
+            </CSVLink>
           )}
           {fileType === "PDF" && (
-            <>
-              <Button variant="contained" onClick={downloadPDF}>
-                Download PDF
-              </Button>
-            </>
-          )}
-          {/* {fileType === "Word" && (
-            <Button variant="contained" onClick={downloadWord}>
-              Download Word
+            <Button variant="contained" onClick={downloadPDF}>
+              Download PDF
             </Button>
-          )} */}
+          )}
         </Grid>
       </Grid>
+      
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
