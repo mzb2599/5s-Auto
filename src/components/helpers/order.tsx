@@ -76,11 +76,11 @@ export const sortByMonth = (data) => {
   };
 
   return data?.sort((a, b) => {
-    const [monthA, yearA] = a?.month?.split(" "); // e.g., ["Jan", "24"]
+    const [monthA, yearA] = a?.month?.split(" "); 
     const [monthB, yearB] = b?.month?.split(" ");
 
     // Create Date objects with year and month for comparison
-    const dateA = new Date(`20${yearA}`, monthMap[monthA]); // Assuming 20XX format for year
+    const dateA = new Date(`20${yearA}`, monthMap[monthA]); 
     const dateB = new Date(`20${yearB}`, monthMap[monthB]);
 
     return dateA - dateB; // Sort in ascending order
@@ -109,7 +109,7 @@ export const getOrderCountByArea = (orders) => {
 };
 
 export const getCustomerId = (CustomerData, orderCustomerId) => {
-  return CustomerData.find((customer) => orderCustomerId == customer.id);
+  return CustomerData.find((customer) => orderCustomerId === customer.id);
 };
 
 export const getTotalOrderValue = (itemDetails) => {

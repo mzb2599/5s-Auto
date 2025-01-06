@@ -25,7 +25,7 @@ interface Customer {
   paymentType: string;
 }
 
-const SignUpFormPagination = () => {
+const CreateCustomer = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isNameValid, setIsNameValid] = useState<boolean>(true);
   const [isPhoneValid, setIsPhoneValid] = useState<boolean>(true);
@@ -236,9 +236,7 @@ const SignUpFormPagination = () => {
               </Grid>
             </Box>
             <Button onClick={submitForm}>Submit</Button>
-
           </Box>
-
         </Container>
       )}
 
@@ -247,4 +245,4 @@ const SignUpFormPagination = () => {
   );
 };
 
-export default SignUpFormPagination;
+export default CreateCustomer;
