@@ -25,12 +25,11 @@ import {
   ViewList as ViewListIcon,
   PersonSearch as PersonSearchIcon,
   Download as DownloadIcon,
-  CurrencyBitcoin,
   CurrencyRupee,
 } from "@mui/icons-material";
 
 // Constants
-const DRAWER_WIDTH = 220;
+const DRAWER_WIDTH = 270;
 const BASE_URL = "http://localhost:3000";
 const THEME_COLORS = {
   primary: "#2b2d42",
@@ -53,6 +52,7 @@ interface NavItem {
 interface SideNavBarProps {
   handleDrawerOpen: () => void;
   handleDrawerClose: () => void;
+  isLogin:boolean;
   open: boolean;
 }
 
@@ -200,6 +200,7 @@ const NavListItem: React.FC<{ item: NavItem; open: boolean }> = ({ item, open })
 const SideNavBar: React.FC<SideNavBarProps> = ({
   handleDrawerOpen,
   handleDrawerClose,
+  isLogin,
   open,
 }) => {
   return (
@@ -216,14 +217,15 @@ const SideNavBar: React.FC<SideNavBarProps> = ({
               marginRight: 4,
               ...(open && { display: "none" }),
             }}
+            disabled={!isLogin}
           >
             <MenuIcon />
           </IconButton>
           <h2>5 S SoftWear</h2>
         </Toolbar>
       </AppBar>
-
-      <Drawer
+      
+      {isLogin && <Drawer
         variant="permanent"
         open={open}
         PaperProps={{
@@ -264,7 +266,7 @@ const SideNavBar: React.FC<SideNavBarProps> = ({
             open={open}
           />
         </List>
-      </Drawer>
+      </Drawer>}
     </>
   );
 };

@@ -30,7 +30,7 @@ const OrderProvider = (props) => {
     customerAddress: "",
   });
 
-  const [lastAddedOrderId, setLastAddedOrderId] = useState<string>("");
+  //const [lastAddedOrderId, setLastAddedOrderId] = useState<string>("");
 
   // Fetching orders data initially
   useEffect(() => {

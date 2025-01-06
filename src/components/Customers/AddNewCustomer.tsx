@@ -25,9 +25,9 @@ interface Customer {
   TypeofWork: string;
   creditLimit: number;
   paymentType: string;
-  balanceAmount:Number;
+  balanceAmount: Number;
 }
-const SignUpFormPagination = () => {
+const CreateCustomer = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isNameValid, setIsNameValid] = useState<boolean>(true);
   const [isPhoneValid, setIsPhoneValid] = useState<boolean>(true);
@@ -53,7 +53,7 @@ const SignUpFormPagination = () => {
     TypeofWork: " ",
     creditLimit: 0,
     paymentType: "cash",
-    balanceAmount:0,
+    balanceAmount: 0,
   });
 
   const validateEmail = (email: string) => {
@@ -364,4 +364,4 @@ const SignUpFormPagination = () => {
   );
 };
 
-export default SignUpFormPagination;
+export default CreateCustomer;
