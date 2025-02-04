@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState } from "react";
 import {
   Box,
   Card,
@@ -8,26 +8,67 @@ import {
   Typography,
   IconButton,
   InputAdornment,
-  Container
-} from '@mui/material';
+  Container,
+  Alert,
+} from "@mui/material";
 import {
   Visibility,
   VisibilityOff,
   Login,
-  PersonAdd
-} from '@mui/icons-material';
-import { UserContext } from '../context/user.tsx';
+  PersonAdd,
+} from "@mui/icons-material";
+import { UserContext } from "../context/user.tsx";
+import { useNavigate } from "react-router-dom";
 
 const AuthForms = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const {userData, setUserData, addUser, isLogin, setIsLogin} = useContext(UserContext);
+  const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
+  const {
+    userData,
+    setUserData,
+    addUser,
+    isLogin,
+    setIsLogin,
+    changePasswordMail,
+  } = useContext(UserContext);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    addUser(userData);    
+    setError("");
+    setSuccess("");
+
+    try {
+      const result = await addUser(userData);
+      setSuccess(result.message);
+      if (isLogin) {
+        // Redirect or handle successful login
+        navigate("/dashboard");
+      }
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
-  const handleChange = (e) => {
+  const handleForgotPassword = async (email: string) => {
+    if (!email) {
+      setError("Please enter your email address");
+      return;
+    }
+
+    const result = await changePasswordMail(email);
+    if (result.success) {
+      setSuccess(result.message);
+      alert(result.message)
+      navigate("/login");
+    } else {
+      setError(result.message);
+      alert(result.message);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserData({ ...userData, [e.target.name]: e.target.value });
   };
 
@@ -35,36 +76,30 @@ const AuthForms = () => {
     <Container component="main" maxWidth="xs">
       <Box
         sx={{
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
-        <Card sx={{ width: '100%' }}>
+        <Card sx={{ width: "100%" }}>
           <CardContent>
             <Typography variant="h5" align="center" gutterBottom>
-              {isLogin ? 'Login' : 'Sign Up'}
+              {isLogin ? "Login" : "Sign Up"}
             </Typography>
-            <Typography variant="body2" color="textSecondary" align="center" sx={{ mb: 3 }}>
-              {isLogin ? 'Welcome back!' : 'Create your account'}
-            </Typography>
+
+            {error && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                {error}
+              </Alert>
+            )}
+            {success && (
+              <Alert severity="success" sx={{ mb: 2 }}>
+                {success}
+              </Alert>
+            )}
 
             <Box component="form" onSubmit={handleSubmit}>
-              {!isLogin && (
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="name"
-                  label="Full Name"
-                  name="name"
-                  autoComplete="name"
-                  value={userData.name}
-                  onChange={handleChange}
-                />
-              )}
-
               <TextField
                 margin="normal"
                 required
@@ -83,7 +118,7 @@ const AuthForms = () => {
                 fullWidth
                 name="password"
                 label="Password"
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 id="password"
                 autoComplete="current-password"
                 value={userData.password}
@@ -116,23 +151,35 @@ const AuthForms = () => {
                 />
               )}
 
+              {isLogin && (
+                <Button
+                  onClick={() => handleForgotPassword(userData.email)}
+                  sx={{
+                    textTransform: "none",
+                    display: "block",
+                    marginLeft: "auto",
+                    mb: 2,
+                  }}
+                >
+                  Forgot password? Reset now
+                </Button>
+              )}
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
-                sx={{ mt: 3, mb: 2 }}
+                sx={{ mt: isLogin ? -1 : 2, mb: 1 }}
                 startIcon={isLogin ? <Login /> : <PersonAdd />}
-                onClick={handleSubmit}
               >
-                {isLogin ? 'Login' : 'Sign Up'}
+                {isLogin ? "Login" : "Sign Up"}
               </Button>
 
               <Button
                 fullWidth
                 onClick={() => setIsLogin(!isLogin)}
-                sx={{ textTransform: 'none' }}
+                sx={{ textTransform: "none" }}
               >
-                {isLogin 
+                {isLogin
                   ? "Don't have an account? Sign up"
                   : "Already have an account? Login"}
               </Button>

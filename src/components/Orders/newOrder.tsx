@@ -114,7 +114,6 @@ const OrderForm: React.FC = () => {
           lastOrderDate: order.orderDate, // set lastOrderDate to order.orderDate
         };
       }
-      debugger;
       return customer; // always return the customer if id doesn't match
     });
 

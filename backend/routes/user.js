@@ -1,21 +1,34 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
-const User = require("../models/user"); // Assuming the User model is in a "models" directory
+const User = require("../models/user");
 const router = express.Router();
+const sendForgotPasswordEmail = require("../sendEmail");
 
 // Secret for JWT - should be stored in .env for production
 const JWT_SECRET = process.env.JWT_TOKEN;
+
+// Get all Users (GET)
+router.get("/users", async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to retrieve users", error: error.message });
+  }
+});
 
 // Signup Route
 router.post("/signup", async (req, res) => {
   const { name, email, password } = req.body;
 
-  // Validate input
-  if (!name || !email || !password) {
-    return res.status(400).json({ message: "All fields are required" });
-  }
-
   try {
+    // Validate input
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -24,24 +37,30 @@ router.post("/signup", async (req, res) => {
 
     // Create a new user
     const newUser = new User({ name, email, password });
-
-    // Save the user to the database
     await newUser.save();
 
-    // Generate a JWT token for the user
-    const token = jwt.sign({ userId: newUser._id }, JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    // Generate a JWT token
+    const token = jwt.sign(
+      { userId: newUser._id, email: newUser.email },
+      JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
-    // Send the response
     res.status(201).json({
       message: "User created successfully",
       token,
-      user: { name: newUser.name, email: newUser.email },
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+      },
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
+    console.error("Signup error:", error);
+    res.status(500).json({
+      message: "Failed to create user",
+      error: error.message,
+    });
   }
 });
 
@@ -49,39 +68,112 @@ router.post("/signup", async (req, res) => {
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
-  // Validate input
-  if (!email || !password) {
-    return res.status(400).json({ message: "Email and password are required" });
-  }
-
   try {
+    // Validate input
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Email and password are required" });
+    }
+
     // Find the user by email
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: "Invalid email or password" });
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // Compare the password with the hashed password in the database
+    // Compare password
     const isMatch = await user.comparePassword(password);
+    console.log(isMatch);
+    
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid email or password" });
+      return res.status(401).json({ message: "Invalid credentials,password mismatch" });
     }
 
-    // Generate a JWT token for the user
-    const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user._id, email: user.email },
+      JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
-    // Send the response
     res.status(200).json({
       message: "Login successful",
       token,
-      user: { name: user.name, email: user.email },
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
+    console.error("Login error:", error);
+    res.status(500).json({
+      message: "Failed to login",
+      error: error.message,
+    });
   }
+});
+
+// Forgot Password Route
+router.post("/forgot-password", async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const user = await User.findOne({ email });
+
+    // Don't reveal whether a user exists for security
+    if (!user) {
+      return res.status(200).json({
+        message:
+          "If an account exists, a password reset link will be sent to your email",
+      });
+    }
+
+    // Generate a password reset token
+    const resetToken = jwt.sign({ userId: user._id }, JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    // Create reset link
+    const resetLink = `http://localhost:3000/reset-password/${resetToken}?mail=${email}`;
+
+    // Send email
+    await sendForgotPasswordEmail(email, resetLink);
+
+    res.status(200).json({
+      message:
+        "If an account exists, a password reset link will be sent to your email",
+    });
+  } catch (error) {
+    console.error("Forgot password error:", error);
+    res.status(500).json({
+      message: "Failed to process password reset request",
+      error: error.message,
+    });
+  }
+});
+
+router.patch("/update-password", (req, res) => {
+  const { password } = req.body;
+  const userEmail = req.body.email; // Assume you have user authentication middleware that adds the user to the request
+
+  if (!password) {
+    return res.status(400).json({ message: "Password is required" });
+  }
+
+  // Update the password in the database (replace this with actual DB logic)
+  User.findOneAndUpdate({ password: password }, { where: { email: userEmail } })
+    .then(() =>
+      res.status(200).json({ message: "Password updated successfully" })
+    )
+    .catch((error) =>
+      res.status(500).json({ message: "Error updating password", error })
+    );  
 });
 
 module.exports = router;

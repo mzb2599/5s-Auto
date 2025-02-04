@@ -9,11 +9,16 @@ const morgan = require("morgan");
 
 // Middleware
 app.use(bodyParser.json());
-app.use(cors());
+const allowedOrigins = ['http://localhost:3000'];
+app.use(cors({
+  origin: allowedOrigins,
+  methods: 'GET,POST,PUT,DELETE,PATCH',
+  credentials: true,
+}));
 app.use(morgan("tiny"));
 
 // MongoDB connection string
-const mongoURI = process.env.MONGODB_URI
+const mongoURI = process.env.MONGODB_URI;
 
 // Connect to MongoDB
 mongoose
@@ -26,13 +31,11 @@ const orderRoutes = require("./routes/orders");
 const customerRoutes = require("./routes/customers");
 const emailRoutes = require("./routes/mail");
 const userRoutes = require("./routes/user");
-
 // Use routes
 app.use("/api/orders", orderRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/email", emailRoutes);
 app.use("/api", userRoutes);
-
 
 // Start server
 const PORT = process.env.PORT || 5000;

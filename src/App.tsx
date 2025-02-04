@@ -1,5 +1,11 @@
 import React, { useContext } from "react";
-import { BrowserRouter, Routes, Route, Outlet, useLocation  } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Outlet,
+  useLocation,
+} from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
@@ -26,6 +32,8 @@ import { UserContext, UserProvider } from "./context/user.tsx";
 
 // Styles
 import "./App.css";
+import ForgotPassword from "./user/forgot.tsx";
+import UpdatePassword from "./user/UpdatePassword.tsx";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -43,28 +51,39 @@ const AppLayout = () => {
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => setOpen(false);
 
-  const url=useLocation();
-  debugger;
+  const url = useLocation();
   return (
     <Grid container spacing={2}>
-      <Grid item xs={2}>          
-          <SideNavBar
-            handleDrawerOpen={handleDrawerOpen}
-            handleDrawerClose={handleDrawerClose}
-            open={open}
-            isLogin={url.pathname!=='/login'}
-          />
+      <Grid item xs={2}>
+        <SideNavBar
+          handleDrawerOpen={handleDrawerOpen}
+          handleDrawerClose={handleDrawerClose}
+          open={open}
+          isLogin={url.pathname !== "/login"}
+        />
       </Grid>
-      <Grid item xs={9} style={{ marginTop: url.pathname=='/login'?"-25px":"100px" }}>
+      <Grid
+        item
+        xs={9}
+        style={{ marginTop: url.pathname == "/login" ? "-25px" : "100px" }}
+      >
         <Item>
           <Routes>
             <Route path="/login" element={<AuthForms />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:id" element={<UpdatePassword />} />
             <Route path="/" element={<PrivateRoute element={<Outlet />} />}>
               <Route path="dashboard" element={<MainContent />} />
               <Route path="add-customer" element={<CreateCustomer />} />
               <Route path="search-customer" element={<SearchCustomer />} />
-              <Route path="customers" element={<PastCustomers area={undefined} />} />
-              <Route path="customers/areawise/:area" element={<AreawiseCustomer />} />
+              <Route
+                path="customers"
+                element={<PastCustomers area={undefined} />}
+              />
+              <Route
+                path="customers/areawise/:area"
+                element={<AreawiseCustomer />}
+              />
               <Route path="customer/:id" element={<EditCustomers />} />
               <Route path="update-payment" element={<PaymentUpdate />} />
               <Route path="new-order" element={<OrderForm />} />
