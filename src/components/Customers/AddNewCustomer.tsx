@@ -75,7 +75,6 @@ const CreateCustomer = () => {
   const nextPage = async () => {
     await validateUserDetails(); //validateUserDetails();
     const { name, phone, email, city, state, area } = userTemp;
-    debugger;
     if (
       name?.length >= 3 &&
       phone?.length === 10 &&
@@ -104,7 +103,6 @@ const CreateCustomer = () => {
       //   return CustomerData?.length>0 ? [...prevData, userTemp]:[userTemp];
       // });
       setUserTemp({ ...userTemp, id: generateUniqueId() });
-      debugger;
       addCustomer(userTemp);
     } else {
       alert("Please fill all the fields properly before submit");
