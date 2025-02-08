@@ -99,6 +99,19 @@ const AuthForms = () => {
               </Alert>
             )}
 
+            {!isLogin && (
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="name"
+                  label="username"
+                  type="text"
+                  id="name"
+                  value={userData.username}
+                  onChange={handleChange}
+                />
+            )}
             <Box component="form" onSubmit={handleSubmit}>
               <TextField
                 margin="normal"
