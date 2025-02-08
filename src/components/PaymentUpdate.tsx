@@ -31,13 +31,15 @@ const UpdateBalanceForm = () => {
   const [balanceAmount, setBalanceAmount] = useState<number>(0);
   const [isBalanceValid, setIsBalanceValid] = useState<boolean>(true);
   useEffect(() => {
-    setUserTemp({
-      ...userTemp,
-      balanceAmount: CustomerData.filter(
-        (customer) => customer.id === customerId
-      ).balanceAmount,
-    });
-  }, [CustomerData]);
+    const customer = CustomerData.find((customer) => customer.id === customerId);
+    if (customer) {
+      setUserTemp({
+        ...userTemp,
+        balanceAmount: customer.balanceAmount,
+      });
+    }
+  }, [CustomerData, customerId]);
+  
   interface Customer {
     id: string;
     name: string;

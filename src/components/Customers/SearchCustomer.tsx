@@ -19,7 +19,8 @@ export default function FullWidthTextField() {
   const handleSearch = () => {
     setCustomers(null);
     const foundCustomer = CustomerData.find(
-      (customer) => customer.id === customerSearch || customer.phone === customerSearch
+      (customer) =>
+        customer.id === customerSearch || customer.phone === customerSearch
     );
     setCustomers(foundCustomer || null);
     setFlag(true);
@@ -34,7 +35,8 @@ export default function FullWidthTextField() {
         borderRadius: 5,
         backgroundColor: "#87CEEB",
         padding: "20px",
-        maxHeight: "600px",
+        maxHeight: "620px",
+        marginLeft: "75px",
       }}
     >
       <h1>Search Customers</h1>
@@ -129,12 +131,23 @@ export default function FullWidthTextField() {
             >
               <Button variant="contained">
                 <strong>
-                  <Link to={linkToCustomerOrders}> Go to Orders</Link>{" "}
+                  <Link
+                    to={linkToCustomerOrders}
+                    style={{ textDecoration: "none" }}
+                  >
+                    {" "}
+                    Go to Orders
+                  </Link>{" "}
                 </strong>
               </Button>
               <Button variant="contained" style={{ marginLeft: "20px" }}>
                 <strong>
-                  <Link to={linkEditCustomers}>Edit details</Link>{" "}
+                  <Link
+                    to={linkEditCustomers}
+                    style={{ textDecoration: "none" }}
+                  >
+                    Edit details
+                  </Link>{" "}
                 </strong>
               </Button>
             </div>
