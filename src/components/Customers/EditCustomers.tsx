@@ -26,7 +26,6 @@ interface Customer {
 }
 
 const CreateCustomer = () => {
-  const [currentPage, setCurrentPage] = useState<number>(1);
   const [isNameValid, setIsNameValid] = useState<boolean>(true);
   const [isPhoneValid, setIsPhoneValid] = useState<boolean>(true);
   const [isEmailValid, setIsEmailValid] = useState<boolean>(true);

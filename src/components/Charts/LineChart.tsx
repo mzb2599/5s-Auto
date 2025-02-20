@@ -16,10 +16,11 @@ import {
   sortByMonth,
 } from "../helpers/order.tsx";
 import { Typography } from "@mui/material";
+import {getOrdersWithinLastYear} from '../helpers/order.tsx'
 
 const LineChartComponent = (props) => {
   const { ordersData } = useContext(OrderContext);
-  const order = getOrderCountByMonth(ordersData)?.reverse();
+  const order = getOrderCountByMonth(getOrdersWithinLastYear(ordersData))?.reverse();
 
   // Map the data correctly to use in the chart
   const data = sortByMonth(

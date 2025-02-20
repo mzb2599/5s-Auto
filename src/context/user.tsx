@@ -16,7 +16,8 @@ interface UserContextType {
   changePasswordMail: (
     email: string
   ) => Promise<{ success: boolean; message: string }>;
-  updatePassword: any
+  updatePassword: any;
+  setIsAuth: any;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -27,6 +28,7 @@ interface UserProviderProps {
 
 const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [isLogin, setIsLogin] = useState(false);
+  const [isAuth, setIsAuth] = useState(false);
   const [userData, setUserData] = useState<User>({
     name: "",
     email: "",
@@ -87,7 +89,7 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(newUser),
-          credentials: "include", // Include credentials if you're using cookies
+          credentials: "include",
         }
       );
 
@@ -97,41 +99,44 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         throw new Error(result.message || "Authentication failed");
       }
 
-      return { success: true, message: result.message };
+      return { success: true, message: result.message, token: result.token };
     } catch (error) {
       console.error("Authentication error:", error);
       throw error;
     }
   };
 
-  const updatePassword = async (email:string, newPassword: string) => {
+  const updatePassword = async (email: string, newPassword: string) => {
     try {
       if (!newPassword) {
         throw new Error("New password is required");
       }
-  
-      const response = await fetch("http://localhost:5000/api/update-password", {
-        method: "PATCH", // Or "PUT" depending on your API design
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: email, password: newPassword }),
-        credentials: "include", // Include credentials if using cookies
-      });
-  
+
+      const response = await fetch(
+        "http://localhost:5000/api/update-password",
+        {
+          method: "PATCH", // Or "PUT" depending on your API design
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: email, password: newPassword }),
+          credentials: "include", // Include credentials if using cookies
+        }
+      );
+
       const result = await response.json();
-  
+
       if (!response.ok) {
         throw new Error(result.message || "Failed to update password");
       }
-  
+
       return { success: true, message: result.message };
     } catch (error) {
       console.error("Password update error:", error);
       throw error;
     }
   };
-  
+
   return (
     <UserContext.Provider
       value={{
@@ -139,9 +144,10 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         setUserData,
         addUser,
         isLogin,
+        setIsAuth,
         setIsLogin,
         changePasswordMail,
-        updatePassword
+        updatePassword,
       }}
     >
       {children}

@@ -13,8 +13,6 @@ import {
 import {
   Visibility,
   VisibilityOff,
-  Login,
-  PersonAdd
 } from '@mui/icons-material';
 import { UserContext } from '../context/user.tsx';
 

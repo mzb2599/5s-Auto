@@ -99,9 +99,6 @@ const CreateCustomer = () => {
   const submitForm = () => {
     const { TypeofWork, creditLimit } = userTemp;
     if (TypeofWork?.length > 0 && creditLimit >= 0) {
-      // setCustomerData((prevData) => {
-      //   return CustomerData?.length>0 ? [...prevData, userTemp]:[userTemp];
-      // });
       setUserTemp({ ...userTemp, id: generateUniqueId() });
       addCustomer(userTemp);
     } else {

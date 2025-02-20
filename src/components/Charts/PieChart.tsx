@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import ReactECharts from "echarts-for-react";
 import { OrderContext } from "../../context/Orders.tsx";
-import { getOrderCountByArea } from "../helpers/order.tsx";
+import { getOrderCountByArea, getOrdersWithinLastYear } from "../helpers/order.tsx";
 import { useNavigate } from "react-router-dom";
 
 const PieChart = () => {
@@ -11,7 +11,8 @@ const PieChart = () => {
   const navigate = useNavigate();
 
   // Transform the data to match ECharts pie chart format
-  const data = getOrderCountByArea(ordersData)?.map((item) => ({
+  let oneYearData= getOrdersWithinLastYear(ordersData);
+  const data = getOrderCountByArea(oneYearData)?.map((item) => ({
     name: item.Area,
     value: item.orderCount,
   }));
@@ -55,11 +56,6 @@ const PieChart = () => {
   const handleChartClick = (params: any) => {
     // Extract the information about the clicked sector
     const { name, value, percent } = params.data;
-
-    // Log or process the clicked sector's details
-    console.log(`Clicked on: ${name}`);
-    console.log(`Value: ${value}`);
-    console.log(`Percentage: ${percent}%`);
 
     // Redirect to /customers
     navigate(`/customers/areawise/${name}`);

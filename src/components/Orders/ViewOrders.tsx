@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -9,12 +9,14 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import NoDataComponent from "../NoData.tsx";
 import { OrderContext } from "../../context/Orders.tsx";
+import { Button } from "@mui/material";
 
 const ViewOrder: React.FC<ViewOrderProps> = () => {
-  const { ordersData, setOrdersData } = useContext(OrderContext);
+  const { ordersData } = useContext(OrderContext);
   const [filteredOrdersData, setFilteredOrdersData] = useState();
-  const [sortType, setSortType] = useState("asc");
+  const [sortType, setSortType] = useState("desc");
   const id = useParams();
+  const navigate = useNavigate();
   useEffect(() => {
     if (id?.id && Array.isArray(ordersData) && ordersData.length > 0) {
       const filteredOrders = ordersData?.filter((order) => {
@@ -96,17 +98,17 @@ const ViewOrder: React.FC<ViewOrderProps> = () => {
     "Order Date",
     "Total Order Value",
     "Discount",
-    "Number of Items",
     "Customer ID",
     "Payment Method",
     "Billing Address",
+    "View Bill",
   ];
 
   return ordersData ? (
     <Paper
       sx={{
-        overflowX: "auto", // Allows horizontal scrolling if the table is too wide
-        width: "100%", // Ensures the table fits the container width
+        overflowX: "hidden",
+        width: "100%",
       }}
     >
       <h1 style={{ fontFamily: "cursive" }}>View Orders</h1>
@@ -179,12 +181,12 @@ const ViewOrder: React.FC<ViewOrderProps> = () => {
                 >
                   {order.discount}
                 </TableCell>
-                <TableCell
+                {/* <TableCell
                   style={{ minWidth: 150, fontFamily: "cursive" }}
                   align="center"
                 >
                   {order.numberOfItems}
-                </TableCell>
+                </TableCell> */}
                 <TableCell
                   style={{ minWidth: 120, fontFamily: "cursive" }}
                   align="center"
@@ -202,6 +204,14 @@ const ViewOrder: React.FC<ViewOrderProps> = () => {
                   align="center"
                 >
                   {order.customerAddress}
+                </TableCell>
+                <TableCell
+                  style={{ minWidth: 150, fontFamily: "cursive" }}
+                  align="center"
+                >
+                  <Button onClick={() => navigate(`/bill?id=${order.orderId}`)}>
+                    View Bill
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}

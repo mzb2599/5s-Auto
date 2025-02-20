@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   Box,
   Card,
@@ -24,6 +24,8 @@ const AuthForms = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
+  const [alertVisible, setAlertVisible] = useState(true); // To control visibility of alerts
+
   const {
     userData,
     setUserData,
@@ -32,45 +34,67 @@ const AuthForms = () => {
     setIsLogin,
     changePasswordMail,
   } = useContext(UserContext);
+
   const navigate = useNavigate();
 
+  // Handle form submission (login/signup)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
-
+    
     try {
       const result = await addUser(userData);
       setSuccess(result.message);
+
+      // Redirect based on login state
       if (isLogin) {
-        // Redirect or handle successful login
+        localStorage.setItem('authToken', result.token)
+        console.log(result);
+        
         navigate("/dashboard");
+      } else {
+        navigate("/login"); // Redirect after successful signup
       }
-    } catch (err) {
-      setError(err.message);
+    } catch (err: any) {
+      setError(err.message || "An unexpected error occurred.");
     }
   };
 
+  // Handle password reset (forgot password)
   const handleForgotPassword = async (email: string) => {
     if (!email) {
-      setError("Please enter your email address");
+      setError("Please enter your email address.");
       return;
     }
 
-    const result = await changePasswordMail(email);
-    if (result.success) {
-      setSuccess(result.message);
-      alert(result.message)
-      navigate("/login");
-    } else {
-      setError(result.message);
-      alert(result.message);
+    try {
+      const result = await changePasswordMail(email);
+      if (result.success) {
+        setSuccess(result.message);
+        alert(result.message);
+        navigate("/login"); // Redirect to login after password reset
+      } else {
+        setError(result.message);
+        alert(result.message);
+      }
+    } catch (err) {
+      setError("An error occurred while resetting the password.");
     }
   };
 
+  // Handle form field changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserData({ ...userData, [e.target.name]: e.target.value });
   };
+
+  // Auto-dismiss alerts after 5 seconds
+  useEffect(() => {
+    if (error || success) {
+      setAlertVisible(true);
+      setTimeout(() => setAlertVisible(false), 5000);
+    }
+  }, [error, success]);
 
   return (
     <Container component="main" maxWidth="xs">
@@ -88,30 +112,34 @@ const AuthForms = () => {
               {isLogin ? "Login" : "Sign Up"}
             </Typography>
 
-            {error && (
+            {/* Display Error or Success Alerts */}
+            {alertVisible && error && (
               <Alert severity="error" sx={{ mb: 2 }}>
                 {error}
               </Alert>
             )}
-            {success && (
+            {alertVisible && success && (
               <Alert severity="success" sx={{ mb: 2 }}>
                 {success}
               </Alert>
             )}
 
+            {/* Signup Form */}
             {!isLogin && (
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  name="name"
-                  label="username"
-                  type="text"
-                  id="name"
-                  value={userData.username}
-                  onChange={handleChange}
-                />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="username"
+                label="Username"
+                type="text"
+                id="username"
+                value={userData.username}
+                onChange={handleChange}
+              />
             )}
+
+            {/* Main Form (Email & Password) */}
             <Box component="form" onSubmit={handleSubmit}>
               <TextField
                 margin="normal"
@@ -150,6 +178,7 @@ const AuthForms = () => {
                 }}
               />
 
+              {/* Confirm Password Field (only for Sign Up) */}
               {!isLogin && (
                 <TextField
                   margin="normal"
@@ -164,6 +193,7 @@ const AuthForms = () => {
                 />
               )}
 
+              {/* Forgot Password (only for Login) */}
               {isLogin && (
                 <Button
                   onClick={() => handleForgotPassword(userData.email)}
@@ -177,6 +207,8 @@ const AuthForms = () => {
                   Forgot password? Reset now
                 </Button>
               )}
+
+              {/* Submit Button */}
               <Button
                 type="submit"
                 fullWidth
@@ -187,6 +219,7 @@ const AuthForms = () => {
                 {isLogin ? "Login" : "Sign Up"}
               </Button>
 
+              {/* Toggle Between Login and Signup */}
               <Button
                 fullWidth
                 onClick={() => setIsLogin(!isLogin)}

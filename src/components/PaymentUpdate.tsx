@@ -11,20 +11,6 @@ import {
   Button,
 } from "@mui/material";
 
-interface Customer {
-  id: string;
-  name: string;
-  phone: string;
-  email: string;
-  city: string;
-  state: string;
-  area: string;
-  TypeofWork: string;
-  creditLimit: number;
-  paymentType: string;
-  balanceAmount: number; // Adding the balanceAmount field
-}
-
 const UpdateBalanceForm = () => {
   const { CustomerData, updateCustomer } = useContext(CustomerContext);
   const [customerId, setCustomerId] = useState<string>("");

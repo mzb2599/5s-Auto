@@ -13,7 +13,7 @@ export interface Customer {
   creditLimit: Number;
   paymentType: string;
   balanceAmount: Number;
-  lastOrderData: Date
+  lastOrderData?: Date
 }
 
 // Create a context with default value
@@ -36,6 +36,7 @@ const CustomerProvider = (props) => {
     creditLimit: 0,
     paymentType: "cash",
     balanceAmount:0,
+    lastOrderData:undefined
   });
 
   // Fetch customers from the backend

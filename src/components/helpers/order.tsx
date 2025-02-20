@@ -47,10 +47,13 @@ export const getOrderCountByMonth = (orders) => {
     return acc;
   }, {});
 
-  return orderValuesByMonth && Object.keys(orderValuesByMonth)?.map((month) => ({
-    month: month,
-    orderCount: orderValuesByMonth[month],
-  }));
+  return (
+    orderValuesByMonth &&
+    Object.keys(orderValuesByMonth)?.map((month) => ({
+      month: month,
+      orderCount: orderValuesByMonth[month],
+    }))
+  );
 };
 
 export const formatMonth = (dateString) => {
@@ -76,21 +79,25 @@ export const sortByMonth = (data) => {
   };
 
   return data?.sort((a, b) => {
-    const [monthA, yearA] = a?.month?.split(" "); 
+    const [monthA, yearA] = a?.month?.split(" ");
     const [monthB, yearB] = b?.month?.split(" ");
 
     // Create Date objects with year and month for comparison
-    const dateA = new Date(`20${yearA}`, monthMap[monthA]); 
+    const dateA = new Date(`20${yearA}`, monthMap[monthA]);
     const dateB = new Date(`20${yearB}`, monthMap[monthB]);
 
     return dateA - dateB; // Sort in ascending order
   });
 };
-
+const titleCase=(s:String)=> {
+  return s.toLowerCase()
+          .split('')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join('');
+}
 export const getOrderCountByArea = (orders) => {
   const orderValuesByArea = orders?.reduce((acc, order) => {
-    const area = order?.customerAddress?.split(",")[1].trim(); // Extract the area from the customer address
-
+    const area = titleCase(order?.customerAddress?.split(",")[1].trim()); 
     if (!acc[area]) {
       acc[area] = 0;
     }
@@ -98,14 +105,12 @@ export const getOrderCountByArea = (orders) => {
     acc[area] += 1;
     return acc;
   }, {});
-
-  return (
-    orderValuesByArea &&
-    Object.keys(orderValuesByArea)?.map((area) => ({
+  
+let orderArea= orderValuesByArea && Object.keys(orderValuesByArea)?.map((area) => ({
       Area: area,
       orderCount: orderValuesByArea[area],
     }))
-  );
+return orderArea;
 };
 
 export const getCustomerId = (CustomerData, orderCustomerId) => {
@@ -116,4 +121,29 @@ export const getTotalOrderValue = (itemDetails) => {
   return itemDetails?.reduce((acc, item) => {
     return acc + item.value;
   }, 0);
+};
+
+export const getOrdersWithinLastYear = (ordersData) => {
+  // Get today's date
+  const today = new Date();
+
+  // Calculate the date one year ago
+  const oneYearAgo = new Date(new Date(today.getFullYear()-1, today.getMonth()+1, 1));
+  
+  console.log("OneyearAgo", oneYearAgo);
+
+  // Filter orders within the last year
+  const filteredOrders = ordersData?.filter((order) => {
+    const orderDate = new Date(order.orderDate); // Assuming 'date' is a string or a timestamp
+    return orderDate >= oneYearAgo && orderDate <= today;
+  });
+
+  return filteredOrders;
+  // // Map the filtered orders to the desired structure
+  // const result = getOrderCountByArea(filteredOrders)?.map((item) => ({
+  //   name: item.Area,
+  //   value: item.orderCount,
+  // }));
+  // debugger;
+  // return result;
 };

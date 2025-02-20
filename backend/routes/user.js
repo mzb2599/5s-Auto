@@ -84,10 +84,12 @@ router.post("/login", async (req, res) => {
 
     // Compare password
     const isMatch = await user.comparePassword(password);
-    console.log(isMatch);
-    
+    console.log(isMatch, user);
+
     if (!isMatch) {
-      return res.status(401).json({ message: "Invalid credentials,password mismatch" });
+      return res
+        .status(401)
+        .json({ message: "Invalid credentials,password mismatch" });
     }
 
     // Generate JWT token
@@ -158,22 +160,51 @@ router.post("/forgot-password", async (req, res) => {
   }
 });
 
-router.patch("/update-password", (req, res) => {
-  const { password } = req.body;
-  const userEmail = req.body.email; // Assume you have user authentication middleware that adds the user to the request
+// router.patch("/update-password", (req, res) => {
+//   const { password } = req.body;
+//   const userEmail = req.body.email;
 
+//   if (!password) {
+//     return res.status(400).json({ message: "Password is required" });
+//   }
+
+//   // Update the password in the database (replace this with actual DB logic)
+//   User.findOneAndUpdate({ password: password }, { where: { email: userEmail } })
+//     .then(() =>
+//       res.status(200).json({ message: "Password updated successfully" })
+//     )
+//     .catch((error) =>
+//       res.status(500).json({ message: "Error updating password", error })
+//     );
+// });
+
+router.patch("/update-password", async (req, res) => {
+  const { email, password } = req.body;
+  console.log(email, password);
+  
   if (!password) {
-    return res.status(400).json({ message: "Password is required" });
+    return res.status(400).json({ message: "New password is required" });
   }
 
-  // Update the password in the database (replace this with actual DB logic)
-  User.findOneAndUpdate({ password: password }, { where: { email: userEmail } })
-    .then(() =>
-      res.status(200).json({ message: "Password updated successfully" })
-    )
-    .catch((error) =>
-      res.status(500).json({ message: "Error updating password", error })
-    );  
+  try {
+    // Find the user by the email decoded from the token
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Update the user's password in the database
+    user.password = password;
+    await user.save();
+    console.log(user);
+
+    res.status(200).json({ message: "Password reset successfully" });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Invalid or expired token", error: error.message });
+  }
 });
 
 module.exports = router;

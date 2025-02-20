@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import {
   BrowserRouter,
   Routes,
@@ -28,12 +28,13 @@ import PrivateRoute from "./user/PrivateRoute.tsx";
 // Context imports
 import { CustomerProvider } from "./context/Customer.tsx";
 import { OrderProvider } from "./context/Orders.tsx";
-import { UserContext, UserProvider } from "./context/user.tsx";
+import { UserProvider } from "./context/user.tsx";
 
 // Styles
 import "./App.css";
 import ForgotPassword from "./user/forgot.tsx";
 import UpdatePassword from "./user/UpdatePassword.tsx";
+import BillGenerator from "./components/bill/bill.tsx";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -45,7 +46,6 @@ const Item = styled(Paper)(({ theme }) => ({
 
 // Main Layout Component
 const AppLayout = () => {
-  const { isLogin } = useContext(UserContext);
   const [open, setOpen] = React.useState(false);
 
   const handleDrawerOpen = () => setOpen(true);
@@ -65,10 +65,11 @@ const AppLayout = () => {
       <Grid
         item
         xs={9}
-        style={{ marginTop: url.pathname == "/login" ? "-25px" : "100px" }}
+        style={{ marginTop: url.pathname === "/login" ? "-25px" : "100px" }}
       >
         <Item>
           <Routes>
+          <Route path="/bill" element={<BillGenerator />} />
             <Route path="/login" element={<AuthForms />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:id" element={<UpdatePassword />} />

@@ -1,5 +1,5 @@
 import React, { useContext, useState, useMemo } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Paper,
   Table,
@@ -170,6 +170,7 @@ const PastCustomers: React.FC<PastCustomersProps> = ({ area }) => {
     // Apply area filter
     if (area) {
       result = result.filter((customer) => customer.city === area);
+      debugger;
     }
 
     // Apply sorting

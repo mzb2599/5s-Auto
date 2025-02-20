@@ -10,7 +10,6 @@ export default function MainContent() {
   return (
     <>
       <HarmonySummaryCard />
-      {/* <SalesDistributionChart /> */}
       <Grid container spacing={2} justifyContent="center" mt={6} mb={3}>
         <Grid item xs={8}>
           <PieChart />

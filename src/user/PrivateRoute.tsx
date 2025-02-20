@@ -1,16 +1,14 @@
-import React, { useContext } from "react";
-import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { UserContext } from "../context/user.tsx";
+import React from "react";
+import { Navigate, useLocation } from "react-router-dom";
 
 interface PrivateRouteProps {
   element: React.ReactNode;
 }
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ element }) => {
-  const { isLogin } = useContext(UserContext);
   const location = useLocation();
 
-  if (!isLogin) {
+  if (localStorage.getItem('authToken') ===null) {
     // Redirect to login page with the return url
     return <Navigate to="/login" state={{ from: location }} replace />;
   }

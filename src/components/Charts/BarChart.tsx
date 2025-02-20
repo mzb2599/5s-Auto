@@ -12,6 +12,7 @@ import {
 import { OrderContext } from "../../context/Orders.tsx";
 import {
   formatMonth,
+  getOrdersWithinLastYear,
   getOrderValueByMonth,
   sortByMonth,
 } from "../helpers/order.tsx";
@@ -19,7 +20,7 @@ import { Typography } from "@mui/material";
 
 const BarChartComponent = ({ heading }) => {
   const { ordersData } = useContext(OrderContext);
-  const orders = getOrderValueByMonth(ordersData)?.reverse();
+  const orders = getOrderValueByMonth(getOrdersWithinLastYear(ordersData))?.reverse();
 
   const data = sortByMonth(
     orders?.map((order) => {

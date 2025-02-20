@@ -9,12 +9,14 @@ const morgan = require("morgan");
 
 // Middleware
 app.use(bodyParser.json());
-const allowedOrigins = ['http://localhost:3000'];
-app.use(cors({
-  origin: allowedOrigins,
-  methods: 'GET,POST,PUT,DELETE,PATCH',
-  credentials: true,
-}));
+const allowedOrigins = ["http://localhost:3000"];
+app.use(
+  cors({
+    origin: allowedOrigins,
+    methods: "GET,POST,PUT,DELETE,PATCH",
+    credentials: true,
+  })
+);
 app.use(morgan("tiny"));
 
 // MongoDB connection string
