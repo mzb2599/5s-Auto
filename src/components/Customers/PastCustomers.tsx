@@ -169,8 +169,10 @@ const PastCustomers: React.FC<PastCustomersProps> = ({ area }) => {
 
     // Apply area filter
     if (area) {
-      result = result.filter((customer) => customer.city === area);
-      debugger;
+      result = result.filter((customer) => 
+        {
+          return customer.city.toLowerCase() === area.toLowerCase()
+        })
     }
 
     // Apply sorting
@@ -218,10 +220,10 @@ const PastCustomers: React.FC<PastCustomersProps> = ({ area }) => {
           <Typography variant="h5" component="h1">
             View Customers
           </Typography>
-          <DurationFilter
+          {area===undefined && <DurationFilter
             duration={duration}
             onDurationChange={handleDurationChange}
-          />
+          /> }
         </Box>
       </Box>
 

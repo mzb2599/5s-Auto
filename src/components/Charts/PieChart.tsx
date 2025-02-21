@@ -16,7 +16,7 @@ const PieChart = () => {
     name: item.Area,
     value: item.orderCount,
   }));
-
+  debugger;
   // Define the option for the chart
   const options = {
     title: {
