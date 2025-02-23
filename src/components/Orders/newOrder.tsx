@@ -296,7 +296,7 @@ const OrderForm: React.FC = () => {
                   Order Image
                 </label>
               </Grid>
-              <Grid item xs={8}>
+              {/* <Grid item xs={8}>
                 <Input
                   id="order-image"
                   type="file"
@@ -304,7 +304,7 @@ const OrderForm: React.FC = () => {
                   ref={imageRef}
                 />
                 <FormHelperText>Select an image to upload</FormHelperText>
-              </Grid>
+              </Grid> */}
             </Grid>
           </Grid>
 
