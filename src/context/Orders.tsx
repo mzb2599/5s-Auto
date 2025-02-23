@@ -5,7 +5,6 @@ export interface Order {
   orderDate: string;
   totalOrderValue: number;
   discount: number;
-  numberOfItems: number;
   orderCustomerId: string;
   itemDetails: Array<{}>;
   paymentMethod: string;
@@ -22,7 +21,6 @@ const OrderProvider = (props) => {
     orderDate: "",
     totalOrderValue: 0,
     discount: 0,
-    numberOfItems: 0,
     orderCustomerId: "",
     itemDetails: [{}],
     paymentMethod: "cash",

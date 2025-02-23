@@ -6,7 +6,6 @@ const orderSchema = new mongoose.Schema({
   orderDate: { type: String, required: true },
   totalOrderValue: { type: Number, required: true },
   discount: { type: Number, required: true },
-  numberOfItems: { type: Number, required: true },
   orderCustomerId: { type: String, required: true },
   itemDetails: { type: Object, required: true },
   paymentMethod: { type: String, required: true },

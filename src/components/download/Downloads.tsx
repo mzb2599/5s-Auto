@@ -51,7 +51,6 @@ interface Order {
   orderDate: string;
   totalOrderValue: number;
   discount: number;
-  numberOfItems: number;
   itemDetails: OrderItem[];
   orderCustomerId: string;
   paymentMethod: string;
@@ -78,7 +77,6 @@ const OrderFields: Field[] = [
   { label: "Order Date", key: "orderDate" },
   { label: "Total Order Value", key: "totalOrderValue" },
   { label: "Discount", key: "discount" },
-  { label: "Number of Items", key: "numberOfItems" },
   { label: "Item Details", key: "itemDetails" },
   { label: "Order Customer ID", key: "orderCustomerId" },
   { label: "Payment Method", key: "paymentMethod" },

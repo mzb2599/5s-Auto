@@ -181,12 +181,6 @@ const ViewOrder: React.FC<ViewOrderProps> = () => {
                 >
                   {order.discount}
                 </TableCell>
-                {/* <TableCell
-                  style={{ minWidth: 150, fontFamily: "cursive" }}
-                  align="center"
-                >
-                  {order.numberOfItems}
-                </TableCell> */}
                 <TableCell
                   style={{ minWidth: 120, fontFamily: "cursive" }}
                   align="center"

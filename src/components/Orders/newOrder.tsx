@@ -30,7 +30,6 @@ interface Order {
   orderDate: string;
   totalOrderValue: number;
   discount: number;
-  numberOfItems: number;
   orderCustomerId: string;
   paymentMethod: string;
   billingAddress: string;
@@ -47,15 +46,13 @@ const OrderForm: React.FC = () => {
     orderDate: format(String(new Date()).substring(0, 25), "yyyy-MM-dd"),
     totalOrderValue: 0,
     discount: 0,
-    numberOfItems: 0,
     orderCustomerId: "",
     itemDetails: [],
     paymentMethod: "",
     billingAddress: "",
     paidAmount: 0,
   });
-  const imageRef = useRef();
-
+  
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     index?: number
@@ -248,17 +245,6 @@ const OrderForm: React.FC = () => {
                 id="discount"
                 name="discount"
                 label="Discount"
-                type="number"
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                required
-                fullWidth
-                id="numberOfItems"
-                name="numberOfItems"
-                label="Number of Items"
                 type="number"
                 onChange={handleChange}
               />

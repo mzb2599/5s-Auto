@@ -69,7 +69,7 @@ const AppLayout = () => {
       >
         <Item>
           <Routes>
-          <Route path="/bill" element={<BillGenerator />} />
+            <Route path="/bill" element={<BillGenerator />} />
             <Route path="/login" element={<AuthForms />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:id" element={<UpdatePassword />} />

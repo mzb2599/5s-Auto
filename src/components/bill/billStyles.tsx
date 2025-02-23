@@ -66,18 +66,18 @@ export const styles = StyleSheet.create({
     borderTop: 1,
     borderBottom: 1,
     borderColor: "#999",
-    paddingVertical: 10,
+    paddingVertical: 5,
   },
   billTo: {
     flex: 1,
   },
   billNumbers: {
     flexDirection: "row",
-    gap: 20,
+    gap: 10,
   },
   table: {
     flexDirection: "column",
-    marginTop: 10,
+    marginTop: 5,
     border: "1px solid black",
     borderRadius: "5px",
     minHeight: 320,
@@ -88,12 +88,12 @@ export const styles = StyleSheet.create({
     borderColor: "#999",
     paddingBottom: 5,
     fontWeight: "bold",
-    padding: "10px",
+    padding: "5px",
   },
   tableRow: {
     flexDirection: "row",
     paddingVertical: 5,
-    height: 50,
+    height: 35,
     position: "relative",
   },
   column1: {
@@ -101,6 +101,11 @@ export const styles = StyleSheet.create({
     textAlign: "center",
   },
   column2: {
+    width: "50%",
+    textAlign: "left",
+    marginLeft: '1px solid black'
+  },
+  column2Header: {
     width: "50%",
     textAlign: "center",
   },

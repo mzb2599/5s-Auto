@@ -8,7 +8,7 @@ import { CustomerContext } from "../../context/Customer.tsx";
 import { styles } from "./billStyles.tsx";
 // Reference image from public folder
 const billheader = process.env.PUBLIC_URL + "/billheader.jpg";
-const billQrCode = process.env.PUBLIC_URL + "/qr.jpg";
+const billQrCode = process.env.PUBLIC_URL + "/qr_code.jpg";
 // Create Document Component
 const BillDocument = (props) => {
   let Total =
@@ -18,7 +18,13 @@ const BillDocument = (props) => {
     <Document>
       <Page size="A4" style={styles.page}>
         {/* Header */}
-        <View style={{border: '1px solid black', padding:'15px', borderRadius: '5px'}}>
+        <View
+          style={{
+            border: "1px solid black",
+            padding: "15px",
+            borderRadius: "5px",
+          }}
+        >
           <View style={styles.header}>
             <View style={styles.logoSection}>
               <View style={styles.logoContainer}>
@@ -42,27 +48,25 @@ const BillDocument = (props) => {
             </View>
           </View>
 
+          <Text style={{ textAlign: "right" }}>
+            Date: {format(new Date(), "dd/MM/yyyy")}
+          </Text>
           {/* Bill Details */}
           <View style={styles.billDetails}>
-            <View style={styles.billTo}>
-              <Text>To,</Text>
-              <Text>{props.customerName}</Text>
-            </View>
+            <Text>To: {props.customerName}</Text>
             <View style={styles.billNumbers}>
-              <Text>Order No: {props?.data && props?.data[0]?.orderId}</Text>
-              <Text>
-                C. Code:{"\t"}
-                {props?.data && props?.data[0]?.orderCustomerId}
-              </Text>
+              <Text>Bill No: {props?.data && props?.data[0]?.orderId}</Text>
             </View>
           </View>
-          <Text>Date: {format(new Date(), "dd/MM/yyyy")}</Text>
-
+          <Text style={{textAlign: 'right'}}>
+            C. Code:{"\t"}
+            {props?.data && props?.data[0]?.orderCustomerId}
+          </Text>
           {/* Table */}
           <View style={styles.table}>
             <View style={styles.tableHeader}>
               <Text style={styles.column1}>Sr.No.</Text>
-              <Text style={styles.column2}>Particular</Text>
+              <Text style={styles.column2Header}>Particular</Text>
               <Text style={styles.column3}>Qty.</Text>
               <Text style={styles.column4}>Amount</Text>
             </View>
