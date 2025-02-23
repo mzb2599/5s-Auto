@@ -13,7 +13,7 @@ const billQrCode = process.env.PUBLIC_URL + "/qr_code.jpg";
 const BillDocument = (props) => {
   let Total =
     props?.data &&
-    props?.data[0]?.itemDetails?.reduce((acc, item) => acc + item.value, 0);
+    props?.data[0]?.itemDetails?.reduce((acc, item) => acc + item.quantity*item.value, 0);
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -49,13 +49,13 @@ const BillDocument = (props) => {
           </View>
 
           <Text style={{ textAlign: "right" }}>
-            Date: {format(new Date(), "dd/MM/yyyy")}
+            Date: {props?.data && format(props?.data[0]?.orderDate, "dd/MM/yyyy")}
           </Text>
           {/* Bill Details */}
           <View style={styles.billDetails}>
             <Text>To: {props.customerName}</Text>
             <View style={styles.billNumbers}>
-              <Text>Bill No: {props?.data && props?.data[0]?.orderId}</Text>
+              <Text style={{marginRight: 11}}>Bill No: {props?.data && props?.data[0]?.orderId}</Text>
             </View>
           </View>
           <Text style={{textAlign: 'right'}}>
@@ -76,7 +76,7 @@ const BillDocument = (props) => {
                 <View style={styles.tableRow}>
                   <Text style={styles.column1}>{index + 1}</Text>
                   <Text style={styles.column2}>{item.name}</Text>
-                  <Text style={styles.column3}>{1}</Text>
+                  <Text style={styles.column3}>{item.quantity}</Text>
                   <Text style={styles.column4}>{item.value}</Text>
                 </View>
               ))}

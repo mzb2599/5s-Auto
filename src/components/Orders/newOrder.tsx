@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef } from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 import { format } from "date-fns";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
@@ -22,6 +22,7 @@ import { getCustomerId, getTotalOrderValue } from "../helpers/order.tsx";
 
 interface OrderItem {
   name: string;
+  quantity: number;
   value: number;
 }
 
@@ -41,6 +42,7 @@ const OrderForm: React.FC = () => {
   const { CustomerData, updateCustomer } = useContext(CustomerContext);
   const { ordersData, addOrder } = useContext(OrderContext);
   const navigate =useNavigate();
+
   const [order, setOrder] = useState<Order>({
     orderId: "",
     orderDate: format(String(new Date()).substring(0, 25), "yyyy-MM-dd"),
@@ -52,14 +54,23 @@ const OrderForm: React.FC = () => {
     billingAddress: "",
     paidAmount: 0,
   });
+  useEffect(() => {
+    setOrder({
+      ...order,
+      itemDetails: [
+        ...order.itemDetails,
+        { name: "",quantity:1, value: 0 },
+      ],
+    });
+  }, []);
   
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     index?: number
   ) => {
-    const { name, value } = event.target;
+    const { name, quantity, value } = event.target;
 
-    if (index !== undefined && (name === "itemName" || name === "value")) {
+    if (index !== undefined && (name === "itemName" || name === "value" || name === "quantity")) {
       // Handle item details updates
       const updatedItems = [...order.itemDetails];
       if (name === "itemName") {
@@ -71,6 +82,12 @@ const OrderForm: React.FC = () => {
         updatedItems[index] = {
           ...updatedItems[index],
           value: Number(value) || 0,
+        };
+      }
+      else if (name === "quantity") {
+        updatedItems[index] = {
+          ...updatedItems[index],
+          quantity: Number(value) || 0,
         };
       }
 
@@ -189,10 +206,10 @@ const OrderForm: React.FC = () => {
               />
             </Grid>
 
-            <Grid container spacing={2} alignItems="center">
+            <Grid container spacing={1} alignItems="center">
               {order.itemDetails?.map((item, index) => (
                 <React.Fragment key={index}>
-                  <Grid item xs={8}>
+                  <Grid item xs={7} ml={1}>
                     <TextField
                       required
                       fullWidth
@@ -203,7 +220,19 @@ const OrderForm: React.FC = () => {
                       onChange={(e: any) => handleChange(e, index)} // Passing the index for item update
                     />
                   </Grid>
-                  <Grid item xs={3}>
+                  <Grid item xs={2}>
+                    <TextField
+                      required
+                      fullWidth
+                      id={`itemQuantity-${index}`}
+                      name="quantity"
+                      label="Quantity"
+                      value={item.quantity}
+                      type="number"
+                      onChange={(e: any) => handleChange(e, index)}
+                    />
+                  </Grid>
+                  <Grid item xs={2}>
                     <TextField
                       required
                       fullWidth
@@ -219,19 +248,18 @@ const OrderForm: React.FC = () => {
               ))}
 
               {/* Add a new item button */}
-              <Grid item xs={12}>
+              <Grid item xs={12} style={{padding: '0px', display: 'flex', justifyContent: 'right', alignItems: 'right'}}>
                 <Button
-                  fullWidth
-                  variant="contained"
+                  variant='text'
                   onClick={() => {
                     setOrder({
                       ...order,
                       itemDetails: [
                         ...order.itemDetails,
-                        { name: "", value: 0 },
+                        { name: "",quantity:1, value: 0 },
                       ],
                     });
-                  }} // Add a new empty item
+                  }}
                 >
                   Add New Item
                 </Button>
@@ -281,30 +309,6 @@ const OrderForm: React.FC = () => {
                 type="number"
                 onChange={handleChange}
               />
-            </Grid>
-
-            <Grid container item xs={12} alignItems="center">
-              <Grid item xs={4} style={{ marginRight: "16px" }}>
-                <label
-                  htmlFor="order-image"
-                  style={{
-                    display: "inline",
-                    marginBottom: "8px",
-                    textAlign: "left",
-                  }}
-                >
-                  Order Image
-                </label>
-              </Grid>
-              {/* <Grid item xs={8}>
-                <Input
-                  id="order-image"
-                  type="file"
-                  inputProps={{ accept: "image/*" }}
-                  ref={imageRef}
-                />
-                <FormHelperText>Select an image to upload</FormHelperText>
-              </Grid> */}
             </Grid>
           </Grid>
 
