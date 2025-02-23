@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 20,
-    backgroundColor: "yellow",
+    backgroundColor: "#ADD8E6",
     borderRadius: 10,
     padding: 12,
     border: '1px solid black',
@@ -55,8 +55,12 @@ export const styles = StyleSheet.create({
     marginBottom: 5,
   },
   qrCode: {
-    width: 60,
-    height: 60,
+    position: "absolute",     
+    width: 80,
+    height: 80,
+    left: "53%",            
+    bottom: 0,              
+    transform: "translateX(-50%)",
     backgroundColor: "#eee",
   },
   billDetails: {
@@ -159,9 +163,10 @@ export const styles = StyleSheet.create({
     marginTop: 10,
   },
   signature: {
+    position: "relative",    
+    right: -5,                
+    bottom: -45,             
     fontSize: 10,
-    textAlign: "right",
-    marginTop: 10,
   },
   bankDetails: {
     flexDirection: "row",

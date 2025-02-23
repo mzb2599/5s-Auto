@@ -7,13 +7,13 @@ import { OrderContext } from "../../context/Orders.tsx";
 import { CustomerContext } from "../../context/Customer.tsx";
 import { styles } from "./billStyles.tsx";
 // Reference image from public folder
-const billheader = process.env.PUBLIC_URL + "/billheader.jpg";
+const billheader = process.env.PUBLIC_URL + "/bill_header.jpg";
 const billQrCode = process.env.PUBLIC_URL + "/qr_code.jpg";
 // Create Document Component
 const BillDocument = (props) => {
   let Total =
     props?.data &&
-    props?.data[0]?.itemDetails?.reduce((acc, item) => acc + item.quantity*item.value, 0);
+    props?.data[0]?.itemDetails?.reduce((acc, item) => acc + (item.quantity?? 1)*item.value, 0);
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -76,7 +76,7 @@ const BillDocument = (props) => {
                 <View style={styles.tableRow}>
                   <Text style={styles.column1}>{index + 1}</Text>
                   <Text style={styles.column2}>{item.name}</Text>
-                  <Text style={styles.column3}>{item.quantity}</Text>
+                  <Text style={styles.column3}>{item.quantity || 1}</Text>
                   <Text style={styles.column4}>{item.value}</Text>
                 </View>
               ))}
@@ -127,10 +127,12 @@ const BillDocument = (props) => {
               </Text>
               <Text style={styles.bankInfo}>A/c No.: 777705235523</Text>
               <Text style={styles.bankInfo}>IFSC Code: ICIC0000074</Text>
+              
             </View>
             <View style={styles.qrCode}>
               <Image src={billQrCode} style={styles.logo} />
             </View>
+            <Text style={styles.signature}>Signature _______________________</Text>
           </View>
         </View>
       </Page>
