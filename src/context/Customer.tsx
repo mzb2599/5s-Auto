@@ -13,7 +13,7 @@ export interface Customer {
   creditLimit: Number;
   paymentType: string;
   balanceAmount: Number;
-  lastOrderData?: Date
+  lastOrderDate?: Date
 }
 
 // Create a context with default value
