@@ -30,7 +30,7 @@ interface Customer {
   city: string;
   state: string;
   TypeofWork: string;
-  gstNo: string;
+  // gstNo: string;
   creditLimit: number;
   paymentType: string;
   lastOrderDate: string;
@@ -66,7 +66,7 @@ const COLUMNS: Column[] = [
   { id: "city", label: "City", minWidth: 60 },
   { id: "state", label: "State", minWidth: 60 },
   { id: "TypeofWork", label: "Type of Work", minWidth: 120 },
-  { id: "gstNo", label: "GST No", minWidth: 120 },
+  // { id: "gstNo", label: "GST No", minWidth: 120 },
   { id: "creditLimit", label: "Credit Limit", minWidth: 50 },
   { id: "paymentType", label: "Payment Type", minWidth: 40 },
   { id: "lastOrderDate", label: "Last Order Date", minWidth: 40 },

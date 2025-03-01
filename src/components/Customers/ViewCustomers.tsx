@@ -88,7 +88,6 @@ export default function StickyHeadTable() {
     "CITY",
     "STATE",
     "TypeofWork",
-    "GST No",
     "CREDIT-LIMIT",
     "PAYMENT-TYPE",
     "ACTIONS",

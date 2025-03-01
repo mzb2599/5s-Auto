@@ -114,130 +114,128 @@ const CreateCustomer = () => {
 
   return (
     <div>
-      {currentPage === 1 && (
-        <Container component="main" maxWidth="xs">
-          <CssBaseline />
-          <Box
-            sx={{
-              marginTop: 8,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              backgroundColor: "lavender",
-              padding: "50px",
-              borderRadius: "10px",
-            }}
-          >
-            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-              <CarRepairIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Welcome to 5 S SoftWear
-            </Typography>
-            <Box component="form" noValidate sx={{ mt: 2 }}>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={12}>
-                  <TextField
-                    autoComplete="given-name"
-                    name="name"
-                    required
-                    fullWidth
-                    id="name"
-                    label="Full Name"
-                    autoFocus
-                    onChange={handleChange}
-                    value={userTemp.name}
-                  />
-                  {!isNameValid && (
-                    <p style={{ color: "red" }}>
-                      Name should be at least 3 characters long
-                    </p>
-                  )}
-                </Grid>
-                <Grid item xs={12} sm={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="phone"
-                    label="Phone Number"
-                    name="phone"
-                    autoComplete="phone"
-                    onChange={handleChange}
-                    value={userTemp.phone}
-                  />
-                  {!isPhoneValid && (
-                    <p style={{ color: "red" }}>
-                      Phone number should be of 10 digits
-                    </p>
-                  )}
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    type="email"
-                    id="email"
-                    label="Email Address"
-                    name="email"
-                    autoComplete="email"
-                    onChange={handleChange}
-                    value={userTemp.email}
-                  />
-                  {!isEmailValid && (
-                    <p style={{ color: "red" }}>Not a valid email id</p>
-                  )}
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField
-                    required
-                    fullWidth
-                    name="city"
-                    label="City"
-                    id="city"
-                    autoComplete="address-city"
-                    onChange={handleChange}
-                    value={userTemp.city}
-                  />
-                  {!isCityValid && (
-                    <p style={{ color: "red" }}>City cannot be empty</p>
-                  )}
-                </Grid>
-                <Grid item xs={3}>
-                  <TextField
-                    required
-                    fullWidth
-                    name="state"
-                    label="State"
-                    id="state"
-                    autoComplete="address-state"
-                    onChange={handleChange}
-                    value={userTemp.state}
-                  />
-                  {!isStateValid && (
-                    <p style={{ color: "red" }}>State cannot be empty</p>
-                  )}
-                </Grid>
-                <Grid item xs={3} mb={2}>
-                  <TextField
-                    required
-                    fullWidth
-                    name="area"
-                    label="Area"
-                    id="area"
-                    autoComplete="address-area"
-                    onChange={handleChange}
-                    value={userTemp.area}
-                  />
-                  {!isCountryValid && (
-                    <p style={{ color: "red" }}>Country cannot be empty</p>
-                  )}
-                </Grid>
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <Box
+          sx={{
+            marginTop: 8,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            backgroundColor: "lavender",
+            padding: "50px",
+            borderRadius: "10px",
+          }}
+        >
+          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+            <CarRepairIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Welcome to 5 S SoftWear
+          </Typography>
+          <Box component="form" noValidate sx={{ mt: 2 }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={12}>
+                <TextField
+                  autoComplete="given-name"
+                  name="name"
+                  required
+                  fullWidth
+                  id="name"
+                  label="Full Name"
+                  autoFocus
+                  onChange={handleChange}
+                  value={userTemp.name}
+                />
+                {!isNameValid && (
+                  <p style={{ color: "red" }}>
+                    Name should be at least 3 characters long
+                  </p>
+                )}
               </Grid>
-            </Box>
-            <Button onClick={submitForm}>Submit</Button>
+              <Grid item xs={12} sm={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="phone"
+                  label="Phone Number"
+                  name="phone"
+                  autoComplete="phone"
+                  onChange={handleChange}
+                  value={userTemp.phone}
+                />
+                {!isPhoneValid && (
+                  <p style={{ color: "red" }}>
+                    Phone number should be of 10 digits
+                  </p>
+                )}
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  type="email"
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                  onChange={handleChange}
+                  value={userTemp.email}
+                />
+                {!isEmailValid && (
+                  <p style={{ color: "red" }}>Not a valid email id</p>
+                )}
+              </Grid>
+              <Grid item xs={4}>
+                <TextField
+                  required
+                  fullWidth
+                  name="city"
+                  label="City"
+                  id="city"
+                  autoComplete="address-city"
+                  onChange={handleChange}
+                  value={userTemp.city}
+                />
+                {!isCityValid && (
+                  <p style={{ color: "red" }}>City cannot be empty</p>
+                )}
+              </Grid>
+              <Grid item xs={3}>
+                <TextField
+                  required
+                  fullWidth
+                  name="state"
+                  label="State"
+                  id="state"
+                  autoComplete="address-state"
+                  onChange={handleChange}
+                  value={userTemp.state}
+                />
+                {!isStateValid && (
+                  <p style={{ color: "red" }}>State cannot be empty</p>
+                )}
+              </Grid>
+              <Grid item xs={3} mb={2}>
+                <TextField
+                  required
+                  fullWidth
+                  name="area"
+                  label="Area"
+                  id="area"
+                  autoComplete="address-area"
+                  onChange={handleChange}
+                  value={userTemp.area}
+                />
+                {!isCountryValid && (
+                  <p style={{ color: "red" }}>Country cannot be empty</p>
+                )}
+              </Grid>
+            </Grid>
           </Box>
-        </Container>
-      )}
+          <Button onClick={submitForm}>Submit</Button>
+        </Box>
+      </Container>
 
       {/* Form Submission Button */}
     </div>

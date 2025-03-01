@@ -19,8 +19,8 @@ export const styles = StyleSheet.create({
     gap: 10,
   },
   logoContainer: {
-    width: 80,
-    height: 80,
+    width: 90,
+    height: 90,
   },
   logo: {
     width: "100%",

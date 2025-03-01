@@ -35,11 +35,7 @@ const BillDocument = (props) => {
                 <Text style={styles.companySubName}>
                   RECYCLING (I) PVT.LTD.
                 </Text>
-                <Text style={styles.address}>
-                  Shop No. 1, Maral House, Near Hp Petrol Pume,
-                </Text>
-                <Text style={styles.address}>Kondwa BkPune 411048.</Text>
-                <Text style={styles.address}>Email: fivesalr@outlook.com</Text>
+                <Text style={styles.address}>Email: 5s.autopartwala@gmail.com</Text>
               </View>
             </View>
             <View style={styles.contactInfo}>
@@ -87,8 +83,9 @@ const BillDocument = (props) => {
             <View style={styles.transportDetails}>
               <Text>Transport Details</Text>
               <Text>L. R. No.:_________________________</Text>
-              <Text>Address.:_________________________</Text>
-              <Text>Qty.: _________ Mob.:___________</Text>
+              <Text>Address.:_______________________</Text>
+              <Text>_______________________________</Text>
+              <Text>Qty.: ______ Mob.:__________________</Text>
               <Text>GST No.: 27AABCZ9936E1ZX</Text>
             </View>
             <View style={styles.calculations}>
@@ -105,7 +102,6 @@ const BillDocument = (props) => {
                 <Text>{Total * 0.01}</Text>
               </View>
               <View style={styles.calcRow}>
-                <Text>IGST %</Text>
                 <Text>________</Text>
               </View>
               <View style={styles.calcRow}>
