@@ -2,13 +2,14 @@ const cron = require("node-cron");
 const nodemailer = require("nodemailer");
 const fs = require("fs");
 const path = require("path");
+const { format, sub } = require("date-fns");
 
 // Configuration for Nodemailer
 const transporter = nodemailer.createTransport({
   service: "gmail", // Replace with your email service provider
   auth: {
-    user: "tfrkalwani2104@gmail.com", // Your email address
-    pass: "bwrf mzrn mexi rbhi", // Your email password or app password
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
@@ -29,7 +30,7 @@ const sendEmail = (recipientEmail, filePath) => {
     text: "Please find the monthly report attached.",
     attachments: [
       {
-        filename: "ASIYA_SSC.pdf",
+        filename: fileName,
         content: fs.createReadStream(filePath), // Correct way to attach PDF
         contentType: "application/pdf", // Set MIME type for PDF
       },
@@ -49,15 +50,59 @@ const sendEmail = (recipientEmail, filePath) => {
 // List of recipients to send emails
 const recipientEmails = ["mzaki2599@gmail.com"];
 
+const fileName = `Monthly_Orders_Report_${format(
+  sub(new Date(), { months: 1 }),
+  "MMM-yy"
+)}.pdf`;
+
 // Path to the file to be attached (change as needed)
-let filePath = path.resolve("D:\\ASIYA_SSC.pdf");
+let filePath = path.join(__dirname, "..", "monthly-report/", fileName);
 console.log("Resolved file path:", filePath); // Debugging: Check file path resolution
 
 // Check if file exists before proceeding
-if (!fs.existsSync(filePath)) {
-  console.error("File not found at path:", filePath);
-  throw new Error(`File not found: ${filePath}`);
-}
+// if (!fs.existsSync(filePath)) {
+//   console.error("File not found at path:", filePath);
+//   throw new Error(`File not found: ${filePath}`);
+// }
+
+// Function to send POST request
+const sendPostRequest = async () => {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/orders/report/create",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("POST request successful:", data);
+  } catch (error) {
+    console.error("Error sending POST request:", error);
+  }
+};
+
+// Schedule the function to run on the last day of every month at 11:59 PM
+cron.schedule("0 8 1 * *", () => {
+  const today = new Date();
+  const lastDayOfMonth = new Date(
+    today.getFullYear(),
+    today.getMonth() + 1,
+    0
+  ).getDate();
+
+  if (true) {
+    console.log("Running scheduled task on the last day of the month...");
+    sendPostRequest();
+  }
+});
 
 // Schedule the email to run on the 1st of every month at 9:00 AM
 cron.schedule("0 9 1 * *", () => {

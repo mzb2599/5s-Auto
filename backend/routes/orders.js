@@ -1,7 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const Order = require("../models/Order");
-
+const { format, sub } = require("date-fns");
+const PDFDocument = require("pdfkit");
+const fs = require("fs");
+const { jsPDF } = require("jspdf");
+const { createCanvas } = require("canvas");
+require("jspdf-autotable");
+const pdf = require("html-pdf");
 // Create a new Order (POST)
 router.post("/", async (req, res) => {
   try {
@@ -94,5 +100,26 @@ router.delete("/:orderId", async (req, res) => {
       .json({ error: "Failed to delete the order", details: error });
   }
 });
+
+// Add these imports at the top if not already present
+const path = require("path");
+const pdfTemplate = require("./orderReport.js");
+
+router.post("/report/create", async (req, res) => {
+  try {
+    const orders = await Order.find();
+    const html = pdfTemplate(orders);
+    const reportsDir = path.join(__dirname, '..', 'monthly-report');
+    pdf.create(html, {}).toFile(path.join(reportsDir,`Monthly_Orders_Report_${format(sub(new Date(),{months:1}),'MMM-yy')}.pdf`), (err) => {
+      if (err) {
+        return res.status(500).send(Promise.reject());
+      }
+      res.status(200).send(Promise.resolve());
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to create PDF report", details: error });
+  }
+});
+
 
 module.exports = router;
