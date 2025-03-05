@@ -91,17 +91,7 @@ const sendPostRequest = async () => {
 
 // Schedule the function to run on the last day of every month at 11:59 PM
 cron.schedule("0 8 1 * *", () => {
-  const today = new Date();
-  const lastDayOfMonth = new Date(
-    today.getFullYear(),
-    today.getMonth() + 1,
-    0
-  ).getDate();
-
-  if (true) {
-    console.log("Running scheduled task on the last day of the month...");
     sendPostRequest();
-  }
 });
 
 // Schedule the email to run on the 1st of every month at 9:00 AM
