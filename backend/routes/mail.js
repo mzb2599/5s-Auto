@@ -13,8 +13,8 @@ const upload = multer({ dest: "uploads/" });
 const transporter = nodemailer.createTransport({
   service: "Gmail", // Use your email provider
   auth: {
-    user: "tfrkalwani2104@gmail.com", // Your email address
-    pass: "",// removed my password 
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,// removed my password 
   },
 });
 

@@ -142,7 +142,7 @@ router.post("/forgot-password", async (req, res) => {
     });
 
     // Create reset link
-    const resetLink = `http://localhost:3000/reset-password/${resetToken}?mail=${email}`;
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}?mail=${email}`;
 
     // Send email
     await sendForgotPasswordEmail(email, resetLink);

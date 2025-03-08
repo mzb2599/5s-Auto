@@ -69,7 +69,7 @@ console.log("Resolved file path:", filePath); // Debugging: Check file path reso
 const sendPostRequest = async () => {
   try {
     const response = await fetch(
-      "http://localhost:5000/api/orders/report/create",
+      `${process.env.BACKEND_URL}/api/orders/report/create`,
       {
         method: "POST",
         headers: {

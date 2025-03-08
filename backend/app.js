@@ -9,7 +9,7 @@ const morgan = require("morgan");
 
 // Middleware
 app.use(bodyParser.json());
-const allowedOrigins = ["http://localhost:3000"];
+const allowedOrigins = [`${process.env.FRONTEND_URL}`];
 app.use(
   cors({
     origin: allowedOrigins,
