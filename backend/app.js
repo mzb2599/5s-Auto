@@ -7,7 +7,7 @@ require("./controller/mailer");
 require("dotenv").config();
 const morgan = require("morgan");
 
-// Middleware
+// Middlewares
 app.use(bodyParser.json());
 const allowedOrigins = [`${process.env.FRONTEND_URL}`];
 app.use(

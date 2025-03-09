@@ -4,29 +4,31 @@ const fs = require("fs");
 const path = require("path");
 const { format, sub } = require("date-fns");
 
-// Configuration for Nodemailer
-const transporter = nodemailer.createTransport({
-  service: "gmail", // Replace with your email service provider
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
 // Function to send email
 const sendEmail = (recipientEmail, filePath) => {
   console.log("File Path Inside sendEmail:", filePath); // Debugging: Check filePath
 
+  // Configuration for Nodemailer
+  const transporter = nodemailer.createTransport({
+    service: "gmail", // Replace with your email service provider
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
   // Check if file path is valid and the file exists
   if (!filePath || !fs.existsSync(filePath)) {
     console.error("Invalid file path or file does not exist.");
     throw new Error(`Invalid file path or file does not exist: ${filePath}`);
   }
 
+  console.log("Email User:", process.env.EMAIL_USER);
+  console.log("Email Pass:", process.env.EMAIL_PASS);
+
   const mailOptions = {
-    from: "tfrkalwani2104@gmail.com", // Sender's email address
+    from: process.env.EMAIL_USER, // Sender's email address
     to: recipientEmail, // Recipient email
-    subject: `${new Date()} Monthly Report`,
+    subject: format`${format(new Date(new Date().getDay(), new Date().getMonth()-1, new Date().getFullYear()), MMM-yyyy)} Monthly Report`,
     text: "Please find the monthly report attached.",
     attachments: [
       {
@@ -59,12 +61,6 @@ const fileName = `Monthly_Orders_Report_${format(
 let filePath = path.join(__dirname, "..", "monthly-report/", fileName);
 console.log("Resolved file path:", filePath); // Debugging: Check file path resolution
 
-// Check if file exists before proceeding
-// if (!fs.existsSync(filePath)) {
-//   console.error("File not found at path:", filePath);
-//   throw new Error(`File not found: ${filePath}`);
-// }
-
 // Function to send POST request
 const sendPostRequest = async () => {
   try {
@@ -91,11 +87,11 @@ const sendPostRequest = async () => {
 
 // Schedule the function to run on the last day of every month at 11:59 PM
 cron.schedule("0 8 1 * *", () => {
-    sendPostRequest();
+  sendPostRequest();
 });
 
 // Schedule the email to run on the 1st of every month at 9:00 AM
-cron.schedule("0 9 1 * *", () => {
+cron.schedule("* * * * *", () => {
   console.log("Sending monthly reports...");
   console.log("File path before sending email:", filePath); // Debugging line
 
