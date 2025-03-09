@@ -28,7 +28,7 @@ const sendEmail = (recipientEmail, filePath) => {
   const mailOptions = {
     from: process.env.EMAIL_USER, // Sender's email address
     to: recipientEmail, // Recipient email
-    subject: format`${format(new Date(new Date().getDay(), new Date().getMonth()-1, new Date().getFullYear()), MMM-yyyy)} Monthly Report`,
+    subject: `${format(sub(new Date(),{months:1}), 'MMM-yyyy')} Monthly Report`,
     text: "Please find the monthly report attached.",
     attachments: [
       {
@@ -39,6 +39,8 @@ const sendEmail = (recipientEmail, filePath) => {
     ],
   };
 
+  console.log("Before sending email:");
+  
   // Send the email
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
@@ -86,12 +88,12 @@ const sendPostRequest = async () => {
 };
 
 // Schedule the function to run on the last day of every month at 11:59 PM
-cron.schedule("0 8 1 * *", () => {
-  sendPostRequest();
-});
+// cron.schedule("* * * * *", () => {
+// });
 
 // Schedule the email to run on the 1st of every month at 9:00 AM
-cron.schedule("* * * * *", () => {
+cron.schedule("* * * * *", async () => {
+  await sendPostRequest();
   console.log("Sending monthly reports...");
   console.log("File path before sending email:", filePath); // Debugging line
 
