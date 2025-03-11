@@ -92,7 +92,7 @@ const sendPostRequest = async () => {
 // });
 
 // Schedule the email to run on the 1st of every month at 9:00 AM
-cron.schedule("* * * * *", async () => {
+cron.schedule("0 9 1 * *", async () => {
   await sendPostRequest();
   console.log("Sending monthly reports...");
   console.log("File path before sending email:", filePath); // Debugging line
