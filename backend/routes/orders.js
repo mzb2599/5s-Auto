@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Order = require("../models/Order");
+const Order = require("../models/order");
 const { format, sub } = require("date-fns");
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
