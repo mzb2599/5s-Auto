@@ -13,7 +13,7 @@ export interface Customer {
   creditLimit: Number;
   paymentType: string;
   balanceAmount: Number;
-  lastOrderDate?: Date
+  lastOrderDate?: Date;
 }
 
 // Create a context with default value
@@ -35,13 +35,13 @@ const CustomerProvider = (props) => {
     gstNumber: "",
     creditLimit: 0,
     paymentType: "cash",
-    balanceAmount:0,
-    lastOrderData:undefined
+    balanceAmount: 0,
+    lastOrderData: undefined,
   });
 
   // Fetch customers from the backend
   useEffect(() => {
-    fetch("http://localhost:5000/api/customers")
+    fetch(process.env.REACT_APP_API_BASE_URL + "/api/customers")
       .then((response) => response.json())
       .then((data) => setCustomerData(data))
       .catch((error) => console.error("Error fetching customers:", error));
@@ -50,13 +50,16 @@ const CustomerProvider = (props) => {
   // Function to add a new customer using POST request
   const addCustomer = async (newCustomer: Customer) => {
     try {
-      const response = await fetch("http://localhost:5000/api/customers", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newCustomer),
-      });
+      const response = await fetch(
+        process.env.REACT_APP_API_BASE_URL + "/api/customers",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newCustomer),
+        }
+      );
       const addedCustomer = await response.json();
       setCustomerData([...CustomerData, addedCustomer]);
       console.log("Cusomer added", addedCustomer);

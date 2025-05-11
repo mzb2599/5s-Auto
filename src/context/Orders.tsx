@@ -32,7 +32,7 @@ const OrderProvider = (props) => {
 
   // Fetching orders data initially
   useEffect(() => {
-    fetch("http://localhost:5000/api/orders")
+    fetch(process.env.REACT_APP_API_BASE_URL + "/api/orders")
       .then((response) => response.json())
       .then((data) => {
         setOrdersData(data);
@@ -43,13 +43,16 @@ const OrderProvider = (props) => {
   // Function to add a new order to the database and update the state
   const addOrder = async (newOrder: Order) => {
     try {
-      const response = await fetch("http://localhost:5000/api/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newOrder),
-      });
+      const response = await fetch(
+        process.env.REACT_APP_API_BASE_URL + "/api/orders",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newOrder),
+        }
+      );
       const addedOrder = await response.json();
       setOrdersData((prevOrders) =>
         prevOrders ? [...prevOrders, addedOrder] : [addedOrder]

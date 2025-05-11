@@ -43,7 +43,7 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       }
 
       const response = await fetch(
-        "http://localhost:5000/api/forgot-password",
+        process.env.REACT_APP_API_BASE_URL + "/api/forgot-password",
         {
           method: "POST",
           headers: {
@@ -113,7 +113,7 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       }
 
       const response = await fetch(
-        "http://localhost:5000/api/update-password",
+        process.env.REACT_APP_API_BASE_URL + "/api/update-password",
         {
           method: "PATCH", // Or "PUT" depending on your API design
           headers: {
