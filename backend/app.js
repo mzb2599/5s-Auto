@@ -22,12 +22,16 @@ app.use(morgan("tiny"));
 // MongoDB connection string
 const mongoURI = process.env.MONGODB_URI;
 
+try {
 // Connect to MongoDB
 mongoose
   .connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("MongoDB connected successfully"))
   .catch((err) => console.log("MongoDB connection error:", err));
-
+}
+catch (error) {
+  console.error("Error connecting to MongoDB:", error);
+}
 // Import routes
 const orderRoutes = require("./routes/orders");
 const customerRoutes = require("./routes/customers");

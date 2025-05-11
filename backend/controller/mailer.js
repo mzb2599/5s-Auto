@@ -61,7 +61,6 @@ const fileName = `Monthly_Orders_Report_${format(
 
 // Path to the file to be attached (change as needed)
 let filePath = path.join(__dirname, "..", "monthly-report/", fileName);
-console.log("Resolved file path:", filePath); // Debugging: Check file path resolution
 
 // Function to send POST request
 const sendPostRequest = async () => {
