@@ -30,8 +30,6 @@ import { CustomerProvider } from "./context/Customer.tsx";
 import { OrderProvider } from "./context/Orders.tsx";
 import { UserProvider } from "./context/user.tsx";
 
-// Styles
-import "./App.css";
 import ForgotPassword from "./user/forgot.tsx";
 import UpdatePassword from "./user/UpdatePassword.tsx";
 import BillGenerator from "./components/bill/bill.tsx";
