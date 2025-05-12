@@ -30,7 +30,7 @@ import {
 
 // Constants
 const DRAWER_WIDTH = 270;
-const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 const THEME_COLORS = {
   primary: "#2b2d42",
   text: "ghostwhite",
