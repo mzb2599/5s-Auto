@@ -9,10 +9,19 @@ const morgan = require("morgan");
 
 // Middlewares
 app.use(bodyParser.json());
-const allowedOrigins = [`${process.env.FRONTEND_URL}`];
+const allowedOrigins = [process.env.FRONTEND_URL];
+
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: "GET,POST,PUT,DELETE,PATCH",
     credentials: true,
   })
