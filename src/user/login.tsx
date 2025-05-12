@@ -49,9 +49,7 @@ const AuthForms = () => {
 
       // Redirect based on login state
       if (isLogin) {
-        localStorage.setItem('authToken', result.token)
-        console.log(result);
-        
+        localStorage.setItem('authToken', result.token)        
         navigate("/dashboard");
       } else {
         navigate("/login"); // Redirect after successful signup

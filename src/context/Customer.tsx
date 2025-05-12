@@ -36,7 +36,7 @@ const CustomerProvider = (props) => {
     creditLimit: 0,
     paymentType: "cash",
     balanceAmount: 0,
-    lastOrderData: undefined,
+    lastOrderDate: undefined,
   });
 
   // Fetch customers from the backend
@@ -72,7 +72,8 @@ const CustomerProvider = (props) => {
   const updateCustomer = async (updatedCustomer: Customer) => {
     try {
       const response = await fetch(
-        process.env.REACT_APP_API_BASE_URL + `/api/customers/${updatedCustomer.id}`,
+        process.env.REACT_APP_API_BASE_URL +
+          `/api/customers/${updatedCustomer.id}`,
         {
           method: "PUT",
           headers: {

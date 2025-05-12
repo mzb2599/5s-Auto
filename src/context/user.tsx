@@ -27,7 +27,7 @@ interface UserProviderProps {
 }
 
 const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
   const [isAuth, setIsAuth] = useState(false);
   const [userData, setUserData] = useState<User>({
     name: "",
