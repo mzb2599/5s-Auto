@@ -72,7 +72,7 @@ const CustomerProvider = (props) => {
   const updateCustomer = async (updatedCustomer: Customer) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/customers/${updatedCustomer.id}`,
+        process.env.REACT_APP_API_BASE_URL + `/api/customers/${updatedCustomer.id}`,
         {
           method: "PUT",
           headers: {

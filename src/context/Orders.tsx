@@ -67,7 +67,8 @@ const OrderProvider = (props) => {
   const updateOrder = async (updatedOrder: Order) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/orders/${updatedOrder.orderCustomerId}`,
+        process.env.REACT_APP_API_BASE_URL +
+          `/api/orders/${updatedOrder.orderCustomerId}`,
         {
           method: "PUT",
           headers: {
