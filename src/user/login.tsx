@@ -42,14 +42,14 @@ const AuthForms = () => {
     e.preventDefault();
     setError("");
     setSuccess("");
-    
+
     try {
       const result = await addUser(userData);
       setSuccess(result.message);
 
       // Redirect based on login state
       if (isLogin) {
-        localStorage.setItem('authToken', result.token)        
+        localStorage.setItem("authToken", result.token);
         navigate("/dashboard");
       } else {
         navigate("/login"); // Redirect after successful signup
@@ -128,11 +128,11 @@ const AuthForms = () => {
                 margin="normal"
                 required
                 fullWidth
-                name="username"
+                name="name"
                 label="Username"
                 type="text"
-                id="username"
-                value={userData.username}
+                id="name"
+                value={userData.name}
                 onChange={handleChange}
               />
             )}
