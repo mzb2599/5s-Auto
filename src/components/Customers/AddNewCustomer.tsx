@@ -52,6 +52,9 @@ const CreateCustomer = () => {
   });
 
   const validateEmail = (email: string) => {
+    if (!email) {
+      return true; // If email is empty, return false
+    }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
@@ -167,7 +170,6 @@ const CreateCustomer = () => {
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
-                    required
                     fullWidth
                     type="email"
                     name="email"
