@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const router = express.Router();
 const sendForgotPasswordEmail = require("../sendEmail");
+const bcrypt = require("bcrypt");
 
 // Secret for JWT - should be stored in .env for production
 const JWT_SECRET = process.env.JWT_TOKEN;
@@ -78,18 +79,10 @@ router.post("/login", async (req, res) => {
 
     // Find the user by email
     const user = await User.findOne({ email });
-    if (!user) {
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!user || !isPasswordValid ) {
       return res.status(401).json({ message: "Invalid credentials" });
-    }
-
-    // Compare password
-    const isMatch = await user.comparePassword(password);
-    console.log(isMatch, user);
-
-    if (!isMatch) {
-      return res
-        .status(401)
-        .json({ message: "Invalid credentials,password mismatch" });
     }
 
     // Generate JWT token

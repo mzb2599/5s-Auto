@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.3",
     "canvas": "^3.1.0",
@@ -28,6 +29,7 @@
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.16",
     "nodemon": "^3.1.7",
-    "pdfkit": "^0.16.0"
+    "pdfkit": "^0.16.0",
+    "phantomjs-prebuilt": "^2.1.16"
   }
 }
