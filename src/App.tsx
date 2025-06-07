@@ -90,7 +90,7 @@ const AppLayout = () => {
               <Route path="orders/:id" element={<ViewOrder />} />
               <Route path="download-report" element={<DownloadReport />} />
               <Route path="*" element={<MainContent />} />
-            </Route> 
+            </Route>
           </Routes>
         </Item>
       </Grid>

@@ -11,6 +11,7 @@ interface UserContextType {
   userData: User;
   setUserData: React.Dispatch<React.SetStateAction<User>>;
   addUser: (newUser: User) => Promise<any>;
+  loginUser: (email:string, password:string) => Promise<any>;
   isLogin: boolean;
   setIsLogin: React.Dispatch<React.SetStateAction<boolean>>;
   changePasswordMail: (
@@ -107,6 +108,37 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     }
   };
 
+  const loginUser = async (email: string, password: string) => {
+    try {
+      if (!email || !password) {
+        throw new Error("Email and password are required");
+      }
+
+      const response = await fetch(
+        process.env.REACT_APP_API_BASE_URL + "/api/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+          credentials: "include", // Include credentials if using cookies
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Login failed");
+      }
+
+      return { success: true, message: result.message, token: result.token };
+    }
+    catch (error) {
+      console.error("Login error:", error);
+      throw error;
+    }
+  }
   const updatePassword = async (email: string, newPassword: string) => {
     try {
       if (!newPassword) {
@@ -144,6 +176,7 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         userData,
         setUserData,
         addUser,
+        loginUser,
         isLogin,
         setIsAuth,
         setIsLogin,
