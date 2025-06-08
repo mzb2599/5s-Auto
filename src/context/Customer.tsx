@@ -3,6 +3,7 @@ import React, { createContext, useState, useEffect } from "react";
 export interface Customer {
   id: string;
   name: string;
+  ContactPerson: string;
   phone: string;
   email: string;
   city: string;

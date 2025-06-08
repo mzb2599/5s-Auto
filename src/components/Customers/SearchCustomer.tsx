@@ -165,7 +165,7 @@ export default function CustomerSearch() {
                 <PersonIcon
                   sx={{ color: "primary.main", mr: 1, fontSize: 28 }}
                 />
-                <Typography variant="h6" fontWeight="500">
+                <Typography variant="h5" fontWeight="500">
                   {customers.name}
                 </Typography>
                 <Chip
@@ -174,6 +174,9 @@ export default function CustomerSearch() {
                   color="primary"
                   sx={{ ml: 2 }}
                 />
+                <Typography variant="h6" fontWeight="500" ml={4}>
+                  Contact: {customers.contactPerson}
+                </Typography>
               </Box>
 
               <Divider sx={{ mb: 3 }} />
