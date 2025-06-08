@@ -131,7 +131,7 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       if (!response.ok) {
         throw new Error(result.message || "Login failed");
       }
-
+      localStorage.setItem("user", email.substring(0,2));
       return { success: true, message: result.message, token: result.token };
     }
     catch (error) {

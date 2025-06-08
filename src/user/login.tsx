@@ -11,9 +11,16 @@ import {
   Container,
   Alert,
 } from "@mui/material";
-import { Visibility, VisibilityOff, Login, PersonAdd } from "@mui/icons-material";
+import {
+  Visibility,
+  VisibilityOff,
+  Login,
+  PersonAdd,
+  LocalActivity,
+} from "@mui/icons-material";
 import { UserContext } from "../context/user.tsx";
 import { useNavigate } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
 
 // Shared components and hooks
 const PasswordField = ({ showPassword, setShowPassword, value, onChange }) => (
@@ -31,10 +38,7 @@ const PasswordField = ({ showPassword, setShowPassword, value, onChange }) => (
     InputProps={{
       endAdornment: (
         <InputAdornment position="end">
-          <IconButton
-            onClick={() => setShowPassword(!showPassword)}
-            edge="end"
-          >
+          <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
             {showPassword ? <VisibilityOff /> : <Visibility />}
           </IconButton>
         </InputAdornment>
@@ -59,7 +63,7 @@ const EmailField = ({ value, onChange }) => (
 
 const AuthAlerts = ({ error, success, alertVisible }) => {
   if (!alertVisible) return null;
-  
+
   return (
     <>
       {error && (
@@ -77,24 +81,27 @@ const AuthAlerts = ({ error, success, alertVisible }) => {
 };
 
 // Login Component
-const LoginForm = ({ toggleAuthMode }) => {
+const LoginForm = ({ toggleAuthMode, setLoading }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [alertVisible, setAlertVisible] = useState(true);
 
-  const { userData, setUserData, addUser, changePasswordMail, loginUser } = useContext(UserContext);
+  const { userData, setUserData, addUser, changePasswordMail, loginUser } =
+    useContext(UserContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
+    setLoading(true);
 
     try {
       const result = await loginUser(userData.email, userData.password);
-      setError(""); 
+      setError("");
       setSuccess(result.message);
+      setLoading(false);
       localStorage.setItem("authToken", result.token);
       navigate("/dashboard");
     } catch (err: any) {
@@ -145,7 +152,7 @@ const LoginForm = ({ toggleAuthMode }) => {
 
       <Box component="form" onSubmit={handleSubmit}>
         <EmailField value={userData.email} onChange={handleChange} />
-        
+
         <PasswordField
           showPassword={showPassword}
           setShowPassword={setShowPassword}
@@ -188,24 +195,25 @@ const LoginForm = ({ toggleAuthMode }) => {
 };
 
 // Signup Component
-const SignupForm = ({ toggleAuthMode }) => {
+const SignupForm = ({ toggleAuthMode, setLoading }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [alertVisible, setAlertVisible] = useState(true);
 
-  const { userData, setUserData, addUser,loginUser } = useContext(UserContext);
+  const { userData, setUserData, addUser, loginUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
-
+    setLoading(true);
     try {
       const result = await addUser(userData);
       setSuccess(result.message);
       navigate("/login");
+      setLoading(false);
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred.");
     }
@@ -245,7 +253,7 @@ const SignupForm = ({ toggleAuthMode }) => {
         />
 
         <EmailField value={userData.email} onChange={handleChange} />
-        
+
         <PasswordField
           showPassword={showPassword}
           setShowPassword={setShowPassword}
@@ -290,25 +298,39 @@ const SignupForm = ({ toggleAuthMode }) => {
 // Main Auth Component
 const AuthForms = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   return (
     <Container component="main" maxWidth="xs">
-      <Box
-        sx={{
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Card sx={{ width: "100%" }}>
-          {isLogin ? (
-            <LoginForm toggleAuthMode={() => setIsLogin(false)} />
-          ) : (
-            <SignupForm toggleAuthMode={() => setIsLogin(true)} />
-          )}
-        </Card>
-      </Box>
+      {loading && (
+        <Box sx={{ display: "flex" }}>
+          <CircularProgress />
+        </Box>
+      )}
+      {!loading && (
+        <Box
+          sx={{
+            minHeight: "100vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Card sx={{ width: "100%" }}>
+            {isLogin ? (
+              <LoginForm
+                toggleAuthMode={() => setIsLogin(false)}
+                setLoading={setLoading}
+              />
+            ) : (
+              <SignupForm
+                toggleAuthMode={() => setIsLogin(true)}
+                setLoading={setLoading}
+              />
+            )}
+          </Card>
+        </Box>
+      )}
     </Container>
   );
 };

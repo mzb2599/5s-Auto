@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { styled, Theme, CSSObject } from "@mui/material/styles";
+import Avatar from "@mui/material/Avatar";
 import {
   Drawer as MuiDrawer,
   AppBar as MuiAppBar,
@@ -27,6 +28,7 @@ import {
   Download as DownloadIcon,
   CurrencyRupee,
 } from "@mui/icons-material";
+import { deepPurple } from "@mui/material/colors";
 
 // Constants
 const DRAWER_WIDTH = 270;
@@ -52,7 +54,7 @@ interface NavItem {
 interface SideNavBarProps {
   handleDrawerOpen: () => void;
   handleDrawerClose: () => void;
-  isLogin:boolean;
+  isLogin: boolean;
   open: boolean;
 }
 
@@ -165,7 +167,10 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 // Components
-const NavListItem: React.FC<{ item: NavItem; open: boolean }> = ({ item, open }) => (
+const NavListItem: React.FC<{ item: NavItem; open: boolean }> = ({
+  item,
+  open,
+}) => (
   <ListItem disablePadding sx={{ display: "block" }}>
     <ListItemButton
       component={Link}
@@ -221,52 +226,75 @@ const SideNavBar: React.FC<SideNavBarProps> = ({
           >
             <MenuIcon />
           </IconButton>
-          <h2>5 S SoftWear</h2>
+          <h2>5 S AutoMobile</h2>
+          {isLogin && (
+            <div
+              style={{
+                marginLeft: "auto",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <Avatar sx={{ bgcolor: deepPurple[500] }} style={{fontSize:'20px', fontWeight:'bold'}}>
+                {localStorage.getItem("user")?.toUpperCase()}
+              </Avatar>
+              
+                <button
+                  style={{ backgroundColor: "transparent", color: "white", border: "none", cursor: "pointer", marginLeft: "10px", fontSize:'20px', fontWeight:'bold' }}
+                onClick={() => {localStorage.clear(); window.location.href = "/login";}}
+                >
+                  Log out
+                </button>
+            
+            </div>
+          )}
         </Toolbar>
       </AppBar>
-      
-      {isLogin && <Drawer
-        variant="permanent"
-        open={open}
-        PaperProps={{
-          sx: { bgcolor: THEME_COLORS.primary },
-        }}
-      >
-        <DrawerHeader>
-          <IconButton
-            onClick={handleDrawerClose}
-            sx={{ bgcolor: THEME_COLORS.iconButton }}
-          >
-            <ChevronLeftIcon />
-          </IconButton>
-        </DrawerHeader>
 
-        <List sx={{ color: THEME_COLORS.text, height: "100%" }}>
-          {/* Main Navigation Items */}
-          {NAV_ITEMS.main.map((item, index) => (
-            <NavListItem key={`main-${index}`} item={item} open={open} />
-          ))}
+      {isLogin && (
+        <Drawer
+          variant="permanent"
+          open={open}
+          PaperProps={{
+            sx: { bgcolor: THEME_COLORS.primary },
+          }}
+        >
+          <DrawerHeader>
+            <IconButton
+              onClick={handleDrawerClose}
+              sx={{ bgcolor: THEME_COLORS.iconButton }}
+            >
+              <ChevronLeftIcon />
+            </IconButton>
+          </DrawerHeader>
 
-          <Divider sx={{ bgcolor: THEME_COLORS.divider }} />
+          <List sx={{ color: THEME_COLORS.text, height: "100%" }}>
+            {/* Main Navigation Items */}
+            {NAV_ITEMS.main.map((item, index) => (
+              <NavListItem key={`main-${index}`} item={item} open={open} />
+            ))}
 
-          {/* Customer Navigation Items */}
-          {NAV_ITEMS.customers.map((item, index) => (
-            <NavListItem key={`customer-${index}`} item={item} open={open} />
-          ))}
+            <Divider sx={{ bgcolor: THEME_COLORS.divider }} />
 
-          <Divider sx={{ bgcolor: THEME_COLORS.divider }} />
+            {/* Customer Navigation Items */}
+            {NAV_ITEMS.customers.map((item, index) => (
+              <NavListItem key={`customer-${index}`} item={item} open={open} />
+            ))}
 
-          {/* Download Reports */}
-          <NavListItem
-            item={{
-              text: "Download Reports",
-              route: "/download-report",
-              icon: <DownloadIcon />,
-            }}
-            open={open}
-          />
-        </List>
-      </Drawer>}
+            <Divider sx={{ bgcolor: THEME_COLORS.divider }} />
+
+            {/* Download Reports */}
+            <NavListItem
+              item={{
+                text: "Download Reports",
+                route: "/download-report",
+                icon: <DownloadIcon />,
+              }}
+              open={open}
+            />
+          </List>
+        </Drawer>
+      )}
     </>
   );
 };

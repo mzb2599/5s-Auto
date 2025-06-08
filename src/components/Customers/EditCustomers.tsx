@@ -131,7 +131,7 @@ const CreateCustomer = () => {
             <CarRepairIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Welcome to 5 S SoftWear
+            Welcome to 5 S AutoMobile
           </Typography>
           <Box component="form" noValidate sx={{ mt: 2 }}>
             <Grid container spacing={2}>
