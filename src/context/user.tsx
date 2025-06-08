@@ -18,7 +18,6 @@ interface UserContextType {
     email: string
   ) => Promise<{ success: boolean; message: string }>;
   updatePassword: any;
-  setIsAuth: any;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -29,7 +28,6 @@ interface UserProviderProps {
 
 const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [isLogin, setIsLogin] = useState(true);
-  const [isAuth, setIsAuth] = useState(false);
   const [userData, setUserData] = useState<User>({
     name: "",
     email: "",
@@ -178,7 +176,6 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         addUser,
         loginUser,
         isLogin,
-        setIsAuth,
         setIsLogin,
         changePasswordMail,
         updatePassword,

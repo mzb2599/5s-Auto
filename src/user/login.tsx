@@ -16,7 +16,6 @@ import {
   VisibilityOff,
   Login,
   PersonAdd,
-  LocalActivity,
 } from "@mui/icons-material";
 import { UserContext } from "../context/user.tsx";
 import { useNavigate } from "react-router-dom";
@@ -87,7 +86,7 @@ const LoginForm = ({ toggleAuthMode, setLoading }) => {
   const [success, setSuccess] = useState("");
   const [alertVisible, setAlertVisible] = useState(true);
 
-  const { userData, setUserData, addUser, changePasswordMail, loginUser } =
+  const { userData, setUserData, changePasswordMail, loginUser } =
     useContext(UserContext);
   const navigate = useNavigate();
 
@@ -201,7 +200,7 @@ const SignupForm = ({ toggleAuthMode, setLoading }) => {
   const [success, setSuccess] = useState("");
   const [alertVisible, setAlertVisible] = useState(true);
 
-  const { userData, setUserData, addUser, loginUser } = useContext(UserContext);
+  const { userData, setUserData, addUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
