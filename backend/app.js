@@ -51,6 +51,14 @@ app.use("/api/customers", customerRoutes);
 app.use("/api/email", emailRoutes);
 app.use("/api", userRoutes);
 
+// Serve static files
+app.use(express.static(path.join(__dirname, 'client/build')));
+
+// Always serve index.html for unmatched routes (after all API routes)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
+
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
