@@ -6,6 +6,7 @@ const app = express();
 require("./controller/mailer");
 require("dotenv").config();
 const morgan = require("morgan");
+const path = require("path");
 
 // Middlewares
 app.use(bodyParser.json());
