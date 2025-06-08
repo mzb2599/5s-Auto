@@ -20,6 +20,7 @@ import CarRepairIcon from "@mui/icons-material/CarRepair";
 interface Customer {
   id: string;
   name: string;
+  contactPerson: string;
   phone: string;
   email: string;
   city: string;
@@ -40,6 +41,7 @@ const CreateCustomer = () => {
   const [userTemp, setUserTemp] = useState<Customer>({
     id: "",
     name: "",
+    contactPerson: "",
     phone: "",
     email: "",
     city: "",
@@ -96,6 +98,7 @@ const CreateCustomer = () => {
       setUserTemp({
         id: "",
         name: "",
+        contactPerson: "",
         phone: "",
         email: "",
         city: "",
@@ -153,6 +156,17 @@ const CreateCustomer = () => {
                     name="name"
                     label="Full Name"
                     value={userTemp.name}
+                    onChange={handleChange}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    name="contactPerson"
+                    label="Contact Person"
+                    value={userTemp.contactPerson}
                     onChange={handleChange}
                     variant="outlined"
                   />
