@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   Button,
   Avatar,
@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import { CustomerContext } from "../../context/Customer.tsx";
 import CarRepairIcon from "@mui/icons-material/CarRepair";
+import getCityCode from "../helpers/cityCode.tsx";
 
 interface Customer {
   id: string;
@@ -54,6 +55,12 @@ const CreateCustomer = () => {
     balanceAmount: 0,
     gstNo: "",
   });
+  useEffect(() => {
+    if (userTemp.city.trim().length > 0) {
+      const areaCode = getCityCode(userTemp.city);
+      setCode(areaCode);
+    }
+  }, [userTemp.city]);
 
   const validateEmail = (email: string) => {
     if (!email) {
