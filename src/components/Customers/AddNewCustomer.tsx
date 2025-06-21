@@ -264,7 +264,6 @@ const CreateCustomer = () => {
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
-                    required
                     fullWidth
                     name="gstNo"
                     label="GST No"

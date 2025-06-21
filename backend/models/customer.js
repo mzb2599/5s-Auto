@@ -9,7 +9,7 @@ const customerSchema = new mongoose.Schema({
   email: { type: String, required: false },
   city: { type: String, required: true },
   state: { type: String, required: true },
-  gstNo: { type: String, required: true },
+  gstNo: { type: String, required: false },
   area: { type: String, required: true },
   TypeofWork: { type: String, required: true },
   creditLimit: { type: Number, required: true },
