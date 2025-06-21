@@ -15,6 +15,7 @@ export interface Customer {
   paymentType: string;
   balanceAmount: Number;
   lastOrderDate?: Date;
+  gstNo: string;
 }
 
 // Create a context with default value
@@ -27,6 +28,7 @@ const CustomerProvider = (props) => {
   const [customer, setCustomer] = useState<Customer>({
     id: "",
     name: " ",
+    ContactPerson: " ",
     phone: " ",
     email: " ",
     city: "",
@@ -38,6 +40,7 @@ const CustomerProvider = (props) => {
     paymentType: "cash",
     balanceAmount: 0,
     lastOrderDate: undefined,
+    gstNo: "",
   });
 
   // Fetch customers from the backend

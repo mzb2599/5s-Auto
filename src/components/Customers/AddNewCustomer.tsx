@@ -30,6 +30,7 @@ interface Customer {
   creditLimit: number;
   paymentType: string;
   balanceAmount: number;
+  gstNo: string;
 }
 
 const CreateCustomer = () => {
@@ -51,6 +52,7 @@ const CreateCustomer = () => {
     creditLimit: 0,
     paymentType: "cash",
     balanceAmount: 0,
+    gstNo: "",
   });
 
   const validateEmail = (email: string) => {
@@ -63,14 +65,17 @@ const CreateCustomer = () => {
 
   const validateUserDetails = () => {
     const { name, phone, email, city, state, area } = userTemp;
-    return (
+
+    let isValid =
       name.length >= 3 &&
       phone.length === 10 &&
       validateEmail(email) &&
       city.length > 0 &&
       state.length > 0 &&
-      area.length > 0
-    );
+      area.length > 0;
+    debugger;
+
+    return isValid;
   };
 
   const nextPage = () => {
@@ -88,7 +93,9 @@ const CreateCustomer = () => {
 
   const submitForm = () => {
     const { TypeofWork, creditLimit } = userTemp;
-
+    if (userTemp.gstNo.length === 0) {
+      setUserTemp({ ...userTemp, gstNo: " " });
+    }
     if (TypeofWork.length > 0 && creditLimit >= 0) {
       const newId = `${code}${CustomerData.length + 1}`;
       const newUser = { ...userTemp, id: newId };
@@ -108,6 +115,7 @@ const CreateCustomer = () => {
         creditLimit: 0,
         paymentType: "cash",
         balanceAmount: 0,
+        gstNo: "",
       });
       setCurrentPage(1); // Reset to the first page
     } else {
