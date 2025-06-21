@@ -69,5 +69,5 @@ export default function getCityCode(cityName) {
     // If no match found, return a default message
     // or handle it as needed
     // For example, you could return an error message or a default code
-    return "City code not found";
+    return "";
 }

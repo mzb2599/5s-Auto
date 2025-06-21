@@ -104,7 +104,9 @@ const CreateCustomer = () => {
       setUserTemp({ ...userTemp, gstNo: " " });
     }
     if (TypeofWork.length > 0 && creditLimit >= 0) {
-      const newId = `${code}${CustomerData.length + 1}`;
+      const newId = `${code}${CustomerData.length < 10 ? "0" : ""}${
+        CustomerData.length + 1
+      }`;
       const newUser = { ...userTemp, id: newId };
       addCustomer(newUser);
       setSnackbarMessage("Customer successfully added!");
