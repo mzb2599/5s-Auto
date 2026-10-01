@@ -1,70 +1,428 @@
-# Getting Started with Create React App
+# 5S Auto
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern full-stack web application built with **React** and a dedicated backend, designed with a focus on usability, data visualization, responsive interfaces, and maintainable application architecture.
+
+## Overview
+
+**5S Auto** is a web-based application developed using modern frontend technologies and a component-driven architecture.
+
+The project combines a rich React user interface with capabilities such as:
+
+* Interactive dashboards and data visualization
+* Responsive and reusable UI components
+* Date-based data management
+* Charts and analytical views
+* Map-based visualization
+* PDF and document generation
+* CSV data export
+* Client-side routing
+* Backend integration
+
+The application is structured to provide a scalable foundation for extending business workflows and data-driven features.
+
+---
+
+## Key Features
+
+### 📊 Data Visualization
+
+The application includes multiple visualization technologies for presenting structured data and analytics:
+
+* ECharts
+* Recharts
+* MUI X Charts
+* Interactive chart components
+* Data-driven visual representations
+
+These components make it possible to transform raw application data into easily understandable dashboards and reports.
+
+### 🗺️ Location & Map Visualization
+
+The application integrates **Leaflet** and **React Leaflet** for map-based functionality.
+
+Additional heatmap support is provided through `leaflet.heat`, enabling geographic data to be represented visually when required.
+
+### 📄 Reporting & Document Generation
+
+The application supports client-side document generation and reporting through libraries such as:
+
+* `@react-pdf/renderer`
+* `jsPDF`
+* `jsPDF AutoTable`
+* `docx`
+
+This provides flexibility for generating structured reports and downloadable business documents.
+
+### 📥 Data Export
+
+Application data can be exported using CSV functionality, making it easier to:
+
+* Download application data
+* Perform offline analysis
+* Share structured datasets
+* Integrate data with spreadsheet-based workflows
+
+### 📅 Date & Time Management
+
+The application uses modern date utilities and date-picker components for handling date-driven workflows.
+
+Technologies include:
+
+* MUI X Date Pickers
+* Day.js
+* date-fns
+
+### 🧭 Client-Side Routing
+
+Application navigation is handled using **React Router**, allowing the application to support multiple views while maintaining a structured single-page application architecture.
+
+---
+
+## Technology Stack
+
+### Frontend
+
+| Technology        | Purpose                          |
+| ----------------- | -------------------------------- |
+| React 18          | UI development                   |
+| React Router      | Application routing              |
+| Material UI       | UI components and design system  |
+| Emotion           | CSS-in-JS styling                |
+| Styled Components | Component-level styling          |
+| ECharts           | Advanced data visualization      |
+| Recharts          | React-based charts               |
+| MUI X Charts      | Material UI charting             |
+| React Leaflet     | Interactive maps                 |
+| Leaflet Heatmap   | Geographic heatmap visualization |
+
+### Documents & Data
+
+| Technology         | Purpose                    |
+| ------------------ | -------------------------- |
+| jsPDF              | PDF generation             |
+| jsPDF AutoTable    | Tabular PDF reports        |
+| React PDF Renderer | React-based PDF generation |
+| docx               | Word document generation   |
+| React CSV          | CSV export                 |
+
+### Testing
+
+The project includes React Testing Library and Jest DOM tooling for frontend testing.
+
+```text
+@testing-library/react
+@testing-library/jest-dom
+@testing-library/user-event
+```
+
+### Backend
+
+The repository contains a dedicated `backend` directory for server-side functionality and application integration.
+
+The frontend is therefore structured to support separation between:
+
+```text
+Frontend
+    ↓
+Application / API Layer
+    ↓
+Backend Services
+    ↓
+Data / Business Logic
+```
+
+---
+
+## Project Architecture
+
+```text
+5s-Auto/
+│
+├── backend/                 # Backend services and APIs
+│
+├── public/                  # Static public assets
+│
+├── src/                     # React application
+│   ├── components/          # Reusable UI components
+│   ├── pages/               # Application views
+│   ├── services/            # API / service integrations
+│   ├── hooks/               # Reusable React hooks
+│   ├── utils/               # Utility functions
+│   └── ...
+│
+├── package.json
+├── package-lock.json
+└── README.md
+```
+
+> The exact internal folder structure may evolve as the application grows.
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+Make sure the following are installed:
+
+* **Node.js**
+* **npm**
+* Git
+
+You can verify your installation with:
+
+```bash
+node --version
+npm --version
+git --version
+```
+
+---
+
+## Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/mzb2599/5s-Auto.git
+```
+
+Navigate into the project:
+
+```bash
+cd 5s-Auto
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+---
+
+## Running the Application
+
+Start the React development server:
+
+```bash
+npm start
+```
+
+The application will be available at:
+
+```text
+http://localhost:3000
+```
+
+The development server automatically reloads when source files are modified.
+
+---
+
+## Production Build
+
+Create an optimized production build:
+
+```bash
+npm run build
+```
+
+The production-ready application will be generated inside:
+
+```text
+build/
+```
+
+---
+
+## Testing
+
+Run the test suite with:
+
+```bash
+npm test
+```
+
+The project uses the React Testing Library ecosystem for frontend testing.
+
+---
 
 ## Available Scripts
 
-In the project directory, you can run:
+| Command         | Description                           |
+| --------------- | ------------------------------------- |
+| `npm start`     | Starts the development server         |
+| `npm test`      | Runs the test suite                   |
+| `npm run build` | Creates a production build            |
+| `npm run eject` | Ejects Create React App configuration |
 
-### `npm start`
+> `npm run eject` is generally not recommended unless direct control over the underlying Create React App configuration is required.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Development Principles
 
-### `npm test`
+The project follows several engineering principles intended to keep the application maintainable as it grows.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Component Reusability
 
-### `npm run build`
+UI functionality should be implemented through reusable components rather than duplicating markup and business logic across pages.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Separation of Concerns
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Application responsibilities should remain separated across:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+* UI components
+* Page-level containers
+* Business logic
+* API/service integrations
+* Utility functions
 
-### `npm run eject`
+### Data-Driven UI
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Charts, tables, maps, and reports should be driven by structured application data rather than tightly coupled presentation logic.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Maintainability
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+The application favors established React ecosystem libraries and reusable abstractions to reduce unnecessary custom implementations.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Responsive Design
 
-## Learn More
+UI components should remain usable across different viewport sizes and device types.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Development Workflow
 
-### Code Splitting
+A typical development workflow is:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```text
+Feature / Requirement
+        ↓
+React Component / Page
+        ↓
+Application Logic
+        ↓
+API Integration
+        ↓
+Backend
+        ↓
+Data Processing
+        ↓
+Visualization / UI
+```
 
-### Analyzing the Bundle Size
+For reporting-oriented functionality:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```text
+Application Data
+       ↓
+Data Processing
+       ↓
+Table / Chart / Map
+       ↓
+PDF / CSV / Document
+       ↓
+Download / Share
+```
 
-### Making a Progressive Web App
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Future Improvements
 
-### Advanced Configuration
+Potential areas for continued development include:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+* Automated frontend and backend testing
+* CI/CD integration
+* Improved application observability
+* Centralized API error handling
+* Authentication and authorization
+* Performance monitoring
+* Code splitting and lazy loading
+* Improved accessibility coverage
+* API documentation
+* Containerized deployment
+* Production environment configuration
 
-### Deployment
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Contributing
 
-### `npm run build` fails to minify
+Contributions are welcome.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Recommended workflow
+
+1. Fork the repository.
+2. Create a feature branch.
+
+```bash
+git checkout -b feature/your-feature
+```
+
+3. Implement your changes.
+4. Run tests.
+
+```bash
+npm test
+```
+
+5. Create a production build.
+
+```bash
+npm run build
+```
+
+6. Commit your changes.
+
+```bash
+git commit -m "feat: add your feature"
+```
+
+7. Push the branch.
+
+```bash
+git push origin feature/your-feature
+```
+
+8. Open a Pull Request.
+
+---
+
+## Code Quality
+
+Before submitting changes, verify that:
+
+* Existing functionality continues to work.
+* New functionality is appropriately tested.
+* Components remain reusable.
+* API interactions handle errors appropriately.
+* Responsive behavior is maintained.
+* No secrets or environment-specific credentials are committed.
+* Production builds complete successfully.
+
+---
+
+## License
+
+Add the project's applicable license here.
+
+If this repository is intended to remain private or proprietary, consider explicitly stating the usage and distribution terms instead of adding an open-source license.
+
+---
+
+## Author
+
+**Mohammed Zaki Bhojani**
+
+Full Stack Developer | React Specialist | Generative AI Builder
+
+* GitHub: [@mzb2599](https://github.com/mzb2599)
+* LinkedIn: [mzakibhojani](https://linkedin.com/in/mzakibhojani)
+
+---
+
+## Project Status
+
+🚧 **Active Development**
+
+The application is under active development, with functionality and architecture expected to evolve as additional requirements are implemented.
